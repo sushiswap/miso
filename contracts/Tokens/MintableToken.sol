@@ -1,9 +1,9 @@
 pragma solidity 0.6.12;
 
-import "../../interfaces/IMisoToken.sol";
+import "openzeppelin-solidity/contracts/access/AccessControl.sol";
 import "./ERC20/ERC20Burnable.sol";
 import "./ERC20/ERC20Pausable.sol";
-import "../OpenZeppelin/access/AccessControl.sol";
+import "../interfaces/IMisoToken.sol";
 
 contract MintableToken is AccessControl, ERC20Burnable, ERC20Pausable, IMisoToken {
     

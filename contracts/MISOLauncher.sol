@@ -15,9 +15,9 @@ pragma solidity 0.6.12;
 import "./Utils/SafeTransfer.sol";
 import "./Utils/BoringMath.sol";
 import "./Access/MISOAccessControls.sol";
-import "../interfaces/IERC20.sol";
-import "../interfaces/IMisoLiquidity.sol";
-import "../interfaces/IBentoBoxFactory.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IMisoLiquidity.sol";
+import "./interfaces/IBentoBoxFactory.sol";
 
 
 contract MISOLauncher is SafeTransfer {

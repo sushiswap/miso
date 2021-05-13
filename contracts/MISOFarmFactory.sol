@@ -12,7 +12,7 @@ pragma solidity 0.6.12;
 //----------------------------------------------------------------------------------
 
 import "./Utils/CloneFactory.sol";
-import "../interfaces/IMisoFarm.sol";
+import "./interfaces/IMisoFarm.sol";
 import "./Access/MISOAccessControls.sol";
 
 contract MISOFarmFactory is CloneFactory {

@@ -8,9 +8,9 @@ pragma solidity 0.6.12;
  * @dev Can update an array of points
  */
 
-import "../OpenZeppelin/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./MISOAccessControls.sol";
-import "../../interfaces/IPointList.sol";
+import "../interfaces/IPointList.sol";
 
 
 contract PointList is IPointList, MISOAccessControls {

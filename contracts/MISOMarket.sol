@@ -15,9 +15,9 @@ pragma solidity 0.6.12;
 import "./Access/MISOAccessControls.sol";
 import "./Utils/BoringMath.sol";
 import "./Utils/SafeTransfer.sol";
-import "../interfaces/IMisoMarket.sol";
-import "../interfaces/IERC20.sol";
-import "../interfaces/IBentoBoxFactory.sol";
+import "./interfaces/IMisoMarket.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IBentoBoxFactory.sol";
 
 
 contract MISOMarket is SafeTransfer {

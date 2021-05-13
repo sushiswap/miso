@@ -14,15 +14,15 @@ pragma experimental ABIEncoderV2;
 //----------------------------------------------------------------------------------
 
 
-import "../OpenZeppelin/utils/ReentrancyGuard.sol";
+import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 import "../Access/MISOAccessControls.sol";
 import "../Utils/SafeTransfer.sol";
 import "../Utils/BoringBatchable.sol";
 import "../Utils/BoringMath.sol";
 import "../Utils/BoringERC20.sol";
 import "../Utils/Documents.sol";
-import "../../interfaces/IPointList.sol";
-import "../../interfaces/IMisoMarket.sol";
+import "../interfaces/IPointList.sol";
+import "../interfaces/IMisoMarket.sol";
 
 /// @notice Attribution to delta.financial
 /// @notice Attribution to dutchswap.com

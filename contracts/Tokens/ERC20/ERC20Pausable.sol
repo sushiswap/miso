@@ -3,7 +3,7 @@
 pragma solidity ^0.6.0;
 
 import "../ERC20.sol";
-import "../../OpenZeppelin/utils/Pausable.sol";
+import "openzeppelin-solidity/contracts/utils/Pausable.sol";
 
 /**
  * @dev ERC20 token with pausable token transfers, minting and burning.

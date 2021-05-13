@@ -13,7 +13,7 @@ pragma solidity 0.6.12;
 
 
 import "./Utils/CloneFactory.sol";
-import "../interfaces/IMisoToken.sol";
+import "./interfaces/IMisoToken.sol";
 import "./Access/MISOAccessControls.sol";
 import "./Utils/SafeTransfer.sol";
 

@@ -24,6 +24,7 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+coverage.json
 
 # nyc test coverage
 .nyc_output
@@ -97,13 +98,18 @@ package-lock.json
 
 hardhat.config.js
 
-package.json
 
 node_modules
 
 #Hardhat files
-cache
-artifacts
+cache/
+artifacts/
+
+# Deployments
+deployments/
+
+# Typechain
+typechain/
 
 #certora temporary files
 .certora*

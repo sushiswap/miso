@@ -14,13 +14,13 @@ pragma solidity 0.6.12;
 
 
 // import "../../interfaces/IERC20.sol";
-import "../OpenZeppelin/token/ERC20/SafeERC20.sol";
-import "../OpenZeppelin/utils/EnumerableSet.sol";
-import "../OpenZeppelin/math/SafeMath.sol";
-import "../OpenZeppelin/access/Ownable.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
+import "openzeppelin-solidity/contracts/utils/EnumerableSet.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/access/Ownable.sol";
 
 import "../Access/MISOAccessControls.sol";
-import "../../interfaces/IMisoFarm.sol";
+import "../interfaces/IMisoFarm.sol";
 import "../Utils/SafeTransfer.sol";
 
 

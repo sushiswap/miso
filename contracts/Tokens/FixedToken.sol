@@ -1,7 +1,7 @@
 pragma solidity 0.6.12;
 
 import "./ERC20.sol";
-import "../../interfaces/IMisoToken.sol";
+import "../interfaces/IMisoToken.sol";
 
 contract FixedToken is ERC20, IMisoToken {
 

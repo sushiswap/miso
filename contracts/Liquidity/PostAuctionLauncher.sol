@@ -12,16 +12,16 @@ pragma solidity 0.6.12;
 //
 //----------------------------------------------------------------------------------
 
-import "../OpenZeppelin/utils/ReentrancyGuard.sol";
+import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 import "../Access/MISOAccessControls.sol";
 import "../Utils/SafeTransfer.sol";
 import "../Utils/BoringMath.sol";
 import "../UniswapV2/UniswapV2Library.sol";
 import "../UniswapV2/interfaces/IUniswapV2Pair.sol";
 import "../UniswapV2/interfaces/IUniswapV2Factory.sol";
-import "../../interfaces/IWETH9.sol";
-import "../../interfaces/IERC20.sol";
-import "../../interfaces/IMisoAuction.sol";
+import "../interfaces/IWETH9.sol";
+import "../interfaces/IERC20.sol";
+import "../interfaces/IMisoAuction.sol";
 
 
 

@@ -1,6 +1,6 @@
 pragma solidity 0.6.12;
 
-import "../OpenZeppelin/access/AccessControl.sol";
+import "openzeppelin-solidity/contracts/access/AccessControl.sol";
 
 
 contract MISOAdminAccess is AccessControl {

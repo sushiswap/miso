@@ -1,9 +1,9 @@
 pragma solidity 0.6.12;
 
-import "../OpenZeppelin/GSN/Context.sol";
-import "../OpenZeppelin/math/SafeMath.sol";
-import "../OpenZeppelin/utils/Address.sol";
-import "../../interfaces/IERC20.sol";
+import "openzeppelin-solidity/contracts/GSN/Context.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
+import "../interfaces/IERC20.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
