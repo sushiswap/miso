@@ -1,6 +1,6 @@
 pragma solidity 0.6.12;
 
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 import "../Utils/Owned.sol";
 import "../Utils/CloneFactory.sol";
 import "../interfaces/IERC20.sol";

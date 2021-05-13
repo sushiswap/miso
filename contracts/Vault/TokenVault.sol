@@ -3,8 +3,8 @@ pragma solidity 0.6.12;
 import "../interfaces/IERC20.sol";
 import "../Utils/SafeMathPlus.sol";
 import "../Utils/SafeTransfer.sol";
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "openzeppelin-solidity/contracts/utils/EnumerableSet.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 
 
 contract TokenVault is SafeTransfer {

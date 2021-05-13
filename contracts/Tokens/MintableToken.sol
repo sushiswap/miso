@@ -1,6 +1,6 @@
 pragma solidity 0.6.12;
 
-import "openzeppelin-solidity/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./ERC20/ERC20Burnable.sol";
 import "./ERC20/ERC20Pausable.sol";
 import "../interfaces/IMisoToken.sol";

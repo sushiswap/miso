@@ -12,7 +12,7 @@ pragma solidity 0.6.12;
 //
 //----------------------------------------------------------------------------------
 
-import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "../Access/MISOAccessControls.sol";
 import "../Utils/SafeTransfer.sol";
 import "../Utils/BoringMath.sol";
