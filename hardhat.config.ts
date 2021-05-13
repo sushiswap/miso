@@ -15,7 +15,10 @@ import { HardhatUserConfig, task } from "hardhat/config";
 
 import { removeConsoleLog } from "hardhat-preprocessor";
 
-const accounts = ["4ca89ec18e37683efa18e0434cd9a28c82d461189c477f5622dae974b43baebf", "fa3c06c67426b848e6cef377a2dbd2d832d3718999fbe377236676c9216d8ec0"]
+// [0] 0x525398B78D82e54D769Ea0292fef51E20B495665
+// [1] 0x02042c8A7DF7703F8d236A66B324bf9F0316A23c
+const accounts = ["ca18a05140a5c5cebe5c711f84b3f1124907a3c6d1835e1c99d337cc7c7b3900"
+                , "ca18a05140a5c5cebe5c711f84b3f1124907a3c6d1835e1c99d337cc7c7b3901"]
 
 // const accounts = {
 //   mnemonic:

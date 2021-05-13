@@ -10,7 +10,7 @@ export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => 
 
     // miso access control
     const accessControlAddress = await contracts.deployAccessControls(deployer)
-    const accessControl = await ethers.getContract("MISOAccessControls")
+    const accessControl = await ethers.getContractAt("MISOAccessControls", accessControlAddress)
 
     if (!(await accessControl.hasAdminRole(admin))) {
         accessControl.addAdminRole(admin, { from: deployer })
@@ -27,7 +27,7 @@ export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => 
     const sushiToken = await contracts.deployContract("SushiToken", deployer)
     const tokenFactoryAddress = await contracts.deployTokenFactory(accessControlAddress, deployer)
 
-    const misoTokenFactory = await ethers.getContract("MISOTokenFactory")
+    const misoTokenFactory = await ethers.getContractAt("MISOTokenFactory", tokenFactoryAddress)
     const templateId: BigNumber = await misoTokenFactory.tokenTemplateId()
 
     if (templateId.toNumber() === 0) {
@@ -49,7 +49,7 @@ export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => 
         deployer
     )
 
-    const misoMarket = await ethers.getContract("MISOMarket")
+    const misoMarket = await ethers.getContractAt("MISOMarket", marketAddress)
 
     // Setup PointList
     const pointList = await contracts.deployContract("PointList", deployer)
@@ -69,7 +69,7 @@ export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => 
     const postAuction = await contracts.deployContract("PostAuctionLauncher", deployer, [wethAddress])
     const launcherAddress = await contracts.deployMisoLauncher(accessControlAddress, wethAddress, bentoBox, deployer)
 
-    const misoLauncher = await ethers.getContract("MISOLauncher")
+    const misoLauncher = await ethers.getContractAt("MISOLauncher", launcherAddress)
     const launcherTemplateId: BigNumber = await misoLauncher.launcherTemplateId()
 
     if (launcherTemplateId.toNumber() == 0) {
@@ -80,7 +80,7 @@ export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => 
     const masterchef = await contracts.deployContract("MISOMasterChef", deployer)
     const farmFactoryAddress = await contracts.deployFarmFactory(accessControlAddress, deployer, 0, 0, deployer)
 
-    const farmFactory = await ethers.getContract("MISOFarmFactory")
+    const farmFactory = await ethers.getContractAt("MISOFarmFactory", farmFactoryAddress)
     const farmTemplateId: BigNumber = await farmFactory.farmTemplateId()
 
     if (farmTemplateId.toNumber() == 0) {

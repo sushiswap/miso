@@ -28,7 +28,7 @@ export default {
                 deterministicDeployment: false
             });
 
-            const accessControl = await ethers.getContract("MISOAccessControls")
+            const accessControl = await ethers.getContractAt("MISOAccessControls", address)
 
             await (await accessControl.initAccessControls(deployer, { from: deployer })).wait()
             return address
@@ -42,7 +42,7 @@ export default {
             deterministicDeployment: false
         });
 
-        const misoTokenFactory = await ethers.getContract("MISOTokenFactory")
+        const misoTokenFactory = await ethers.getContractAt("MISOTokenFactory",address)
 
         const _accessControls = await misoTokenFactory.accessControls()
 
@@ -62,7 +62,7 @@ export default {
             deterministicDeployment: false
         });
 
-        const misoMarket = await ethers.getContract("MISOMarket")
+        const misoMarket = await ethers.getContractAt("MISOMarket", address)
         const templateId: BigNumber = await misoMarket.auctionTemplateId()
 
         if (templateId.toNumber() === 0) {
@@ -86,7 +86,7 @@ export default {
             deterministicDeployment: false
         });
 
-        const pointListFactory = await ethers.getContract("ListFactory")
+        const pointListFactory = await ethers.getContractAt("ListFactory", address)
         const _accessControls = await pointListFactory.accessControls()
 
         if (_accessControls === ZERO_ADDRESS) {
@@ -108,7 +108,7 @@ export default {
             deterministicDeployment: false
         });
 
-        const misoLauncher = await ethers.getContract("MISOLauncher")
+        const misoLauncher = await ethers.getContractAt("MISOLauncher", address)
         const _accessControls = await misoLauncher.accessControls()
 
         if (_accessControls === ZERO_ADDRESS) {
@@ -130,7 +130,7 @@ export default {
             deterministicDeployment: false
         });
 
-        const farmFactory = await ethers.getContract("MISOFarmFactory")
+        const farmFactory = await ethers.getContractAt("MISOFarmFactory", address)
         const _accessControls = await farmFactory.accessControls()
 
         if (_accessControls === ZERO_ADDRESS) {
