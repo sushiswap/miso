@@ -80,21 +80,21 @@ const config: HardhatUserConfig = {
       tags: ["staging"],
     },
     goerli: {
-      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 5,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
-      gasPrice: 50,
     },
     kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 42,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+
     },
     moonbase: {
       url: 'https://rpc.testnet.moonbeam.network',
