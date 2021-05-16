@@ -36,7 +36,7 @@ pragma experimental ABIEncoderV2;
 
 
 
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "../OpenZeppelin/utils/ReentrancyGuard.sol";
 import "../Access/MISOAccessControls.sol";
 import "../Utils/SafeTransfer.sol";
 import "../Utils/BoringBatchable.sol";
