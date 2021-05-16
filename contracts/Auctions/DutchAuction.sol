@@ -536,7 +536,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         require(_startTime < 10000000000, "DutchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_endTime < 10000000000, "DutchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "DutchAuction: start time is before current time");
-        require(_endTime > _startTime, "DutchAuction: end time must be older than start price");
+        require(_endTime > _startTime, "DutchAuction: end time must be older than start time");
         require(marketStatus.commitmentsTotal == 0, "DutchAuction: auction cannot have already started");
 
         marketInfo.startTime = BoringMath.to64(_startTime);
