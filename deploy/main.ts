@@ -5,8 +5,15 @@ import contracts from "../scripts/contracts"
 export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => {
     const { deployer, admin } = await getNamedAccounts()
 
+    // Make sure you set the correct admin
+
     //  When deployed, should the contracts be unlocked?
-    const unlock = true
+    const unlock = false
+
+    // get the bentobox address
+    // const bentoBox = await contracts.deployContract("BoringFactory", deployer)
+    const bentoBox = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966
+
 
     // miso access control
     const accessControlAddress = await contracts.deployAccessControls(deployer)
@@ -37,7 +44,6 @@ export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => 
     }
 
     // Setup MISO Market
-    const bentoBox = await contracts.deployContract("BoringFactory", deployer)
     const crowdsale = await contracts.deployContract("Crowdsale", deployer)
     const dutchAuction = await contracts.deployContract("DutchAuction", deployer)
     const batchAuction = await contracts.deployContract("BatchAuction", deployer)
@@ -78,7 +84,7 @@ export default async ({ ethers, getNamedAccounts, deployments, getChainId }) => 
 
     // MISOFarmFactory
     const masterchef = await contracts.deployContract("MISOMasterChef", deployer)
-    const farmFactoryAddress = await contracts.deployFarmFactory(accessControlAddress, deployer, 0, 0, deployer)
+    const farmFactoryAddress = await contracts.deployFarmFactory(accessControlAddress, admin, 0, 0, deployer)
 
     const farmFactory = await ethers.getContractAt("MISOFarmFactory", farmFactoryAddress)
     const farmTemplateId: BigNumber = await farmFactory.farmTemplateId()

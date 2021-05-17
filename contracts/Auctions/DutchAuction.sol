@@ -12,7 +12,34 @@ pragma experimental ABIEncoderV2;
 //  'mMm'        ':MMmm'         'mMm:  II:  'sSSSSSSSSSSSSS'     'oOOOOOOOOOOOO'  
 //
 //----------------------------------------------------------------------------------
-
+//
+// Chef Gonpachi's Dutch Auction
+//
+// A declining price auction with fair price discovery. 
+//
+// Inspired by DutchSwap's Dutch Auctions
+// https://github.com/deepyr/DutchSwap
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// The above copyright notice and this permission notice shall be included 
+// in all copies or substantial portions of the Software.
+//
+// Made for Sushi.com 
+// 
+// Enjoy. (c) Chef Gonpachi, Kusatoshi, SSMikazu 2021 
+// <https://github.com/chefgonpachi/MISO/>
+//
+// ---------------------------------------------------------------------
+// SPDX-License-Identifier: GPL-3.0-or-later                        
+// ---------------------------------------------------------------------
 
 import "../OpenZeppelin/utils/ReentrancyGuard.sol";
 import "../Access/MISOAccessControls.sol";

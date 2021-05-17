@@ -72,12 +72,21 @@ const config: HardhatUserConfig = {
       tags: ["test", "local"],
     },
     ropsten: {
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts,
       chainId: 3,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+    },
+    rinkeby: {
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      accounts,
+      chainId: 4,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasPrice: 5000000000,
     },
     goerli: {
       url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -86,6 +95,7 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasPrice: 5000000000,
     },
     kovan: {
       url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,

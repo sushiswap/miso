@@ -5,9 +5,20 @@ import "./ERC20.sol";
 import "../interfaces/IMisoToken.sol";
 import "../OpenZeppelin/access/AccessControl.sol";
 
-
-
+// ---------------------------------------------------------------------
+//
 // SushiToken with Governance.
+//
+// From the MISO Token Factory
+// Made for Sushi.com 
+// 
+// Enjoy. (c) Chef Gonpachi 2021 
+// <https://github.com/chefgonpachi/MISO/>
+//
+// ---------------------------------------------------------------------
+// SPDX-License-Identifier: GPL-3.0-or-later                        
+// ---------------------------------------------------------------------
+
 contract SushiToken is IMisoToken, AccessControl, ERC20 {
 
     /// @notice Miso template id for the token factory.
