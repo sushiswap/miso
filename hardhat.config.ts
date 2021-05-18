@@ -17,14 +17,16 @@ import { removeConsoleLog } from "hardhat-preprocessor";
 
 // [0] 0x525398B78D82e54D769Ea0292fef51E20B495665
 // [1] 0x02042c8A7DF7703F8d236A66B324bf9F0316A23c
-const accounts = ["ca18a05140a5c5cebe5c711f84b3f1124907a3c6d1835e1c99d337cc7c7b3900"
-                , "ca18a05140a5c5cebe5c711f84b3f1124907a3c6d1835e1c99d337cc7c7b3901"]
+// const accounts = [
+//   "ca18a05140a5c5cebe5c711f84b3f1124907a3c6d1835e1c99d337cc7c7b3900",
+//   "ca18a05140a5c5cebe5c711f84b3f1124907a3c6d1835e1c99d337cc7c7b3901",
+// ];
 
-// const accounts = {
-//   mnemonic:
-//     process.env.MNEMONIC ||
-//     "test test test test test test test test test test test junk",
-// };
+const accounts = {
+  mnemonic:
+    process.env.MNEMONIC ||
+    "test test test test test test test test test test test junk",
+};
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -55,14 +57,18 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts,
+      gasPrice: 200 * 1000000000,
+      chainId: 1,
+    },
     localhost: {
       live: false,
       saveDeployments: true,
       tags: ["local"],
     },
     hardhat: {
-      // Seems to be a bug with this, even when false it complains about being unauthenticated.
-      // Reported to HardHat team and fix is incoming
       forking: {
         enabled: process.env.FORKING === "true",
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -72,55 +78,64 @@ const config: HardhatUserConfig = {
       tags: ["test", "local"],
     },
     ropsten: {
-      url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 3,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasPrice: 5000000000,
+      blockGasLimit: 4000000,
+      // gasMultiplier: 2,
     },
     rinkeby: {
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 4,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
       gasPrice: 5000000000,
+      gasMultiplier: 2,
     },
     goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 5,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
-      gasPrice: 5000000000,
+      gasPrice: 20000000000,
+      gasMultiplier: 2,
     },
     kovan: {
-      url: `https://eth-kovan.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+      url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 42,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
-
+      gasPrice: 20000000000,
+      gasMultiplier: 2,
     },
-    moonbase: {
-      url: 'https://rpc.testnet.moonbeam.network',
+    "moonbeam-testnet": {
+      url: "https://rpc.testnet.moonbeam.network",
       accounts,
       chainId: 1287,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gas: 5198000,
+      gasMultiplier: 2,
     },
-    arbitrum: {
-      url: 'https://kovan3.arbitrum.io/rpc',
+    "arbitrum-testnet": {
+      url: "https://kovan3.arbitrum.io/rpc",
       accounts,
       chainId: 79377087078960,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasMultiplier: 2,
     },
     fantom: {
       url: "https://rpcapi.fantom.network",
@@ -128,14 +143,16 @@ const config: HardhatUserConfig = {
       chainId: 250,
       live: true,
       saveDeployments: true,
+      gasPrice: 22000000000,
     },
-    fantom_testnet: {
+    "fantom-testnet": {
       url: "https://rpc.testnet.fantom.network",
       accounts,
       chainId: 4002,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
+      gasMultiplier: 2,
     },
     matic: {
       url: "https://rpc-mainnet.maticvigil.com",
@@ -143,6 +160,15 @@ const config: HardhatUserConfig = {
       chainId: 137,
       live: true,
       saveDeployments: true,
+    },
+    "matic-testnet": {
+      url: "https://rpc-mumbai.maticvigil.com/",
+      accounts,
+      chainId: 80001,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
     },
     xdai: {
       url: "https://rpc.xdaichain.com",
@@ -158,14 +184,80 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
     },
-    bsc_testnet: {
+    "bsc-testnet": {
       url: "https://data-seed-prebsc-2-s3.binance.org:8545",
       accounts,
       chainId: 97,
       live: true,
       saveDeployments: true,
       tags: ["staging"],
-    }
+      gasMultiplier: 2,
+    },
+    heco: {
+      url: "https://http-mainnet.hecochain.com",
+      accounts,
+      chainId: 128,
+      live: true,
+      saveDeployments: true,
+    },
+    "heco-testnet": {
+      url: "https://http-testnet.hecochain.com",
+      accounts,
+      chainId: 256,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    avalanche: {
+      url: "https://api.avax.network/ext/bc/C/rpc",
+      accounts,
+      chainId: 43114,
+      live: true,
+      saveDeployments: true,
+      gasPrice: 470000000000,
+    },
+    "avalanche-testnet": {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      accounts,
+      chainId: 43113,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    harmony: {
+      url: "https://api.s0.t.hmny.io",
+      accounts,
+      chainId: 1666600000,
+      live: true,
+      saveDeployments: true,
+    },
+    "harmony-testnet": {
+      url: "https://api.s0.b.hmny.io",
+      accounts,
+      chainId: 1666700000,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
+    okex: {
+      url: "https://exchainrpc.okex.org",
+      accounts,
+      chainId: 66,
+      live: true,
+      saveDeployments: true,
+    },
+    "okex-testnet": {
+      url: "https://exchaintestrpc.okex.org",
+      accounts,
+      chainId: 65,
+      live: true,
+      saveDeployments: true,
+      tags: ["staging"],
+      gasMultiplier: 2,
+    },
   },
   preprocess: {
     eachLine: removeConsoleLog(

@@ -38,7 +38,7 @@ pragma experimental ABIEncoderV2;
 // <https://github.com/chefgonpachi/MISO/>
 //
 // ---------------------------------------------------------------------
-// SPDX-License-Identifier: GPL-3.0-or-later                        
+// SPDX-License-Identifier: GPL-3.0                        
 // ---------------------------------------------------------------------
 
 import "../OpenZeppelin/utils/ReentrancyGuard.sol";
