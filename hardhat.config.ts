@@ -38,6 +38,91 @@ task("accounts", "Prints the list of accounts", async (args, { ethers }) => {
   }
 });
 
+task("add:admin", "Adds admin")
+  .addParam("address", "New Admin")
+  .setAction(async function (
+    { address },
+    { ethers: { getNamedSigner, getContract } }
+  ) {
+    const admin = await getNamedSigner("admin");
+
+    const accessControl = await getContract("MISOAccessControl", admin);
+
+    console.log("Adding admin...");
+
+    await (await accessControl.addAdminRole(address)).wait();
+
+    console.log("Admin added!");
+  });
+
+task("unlock", "Unlocks MISO").setAction(async function (
+  _,
+  { ethers: { getNamedSigner, getContract } }
+) {
+  const admin = await getNamedSigner("admin");
+
+  const misoMarket = await getContract("MISOMarket", admin);
+  const farmFactory = await getContract("MISOFarmFactory", admin);
+  const misoLauncher = await getContract("MISOLauncher", admin);
+  const misoTokenFactory = await getContract("MISOTokenFactory", admin);
+
+  const marketLocked = await misoMarket.locked();
+  const farmFactoryLocked = await farmFactory.locked();
+  const launcherLocked = await misoLauncher.locked();
+  const tokenFactoryLocked = await misoTokenFactory.locked();
+
+  console.log("Unlocking...");
+
+  if (marketLocked) {
+    await (await misoMarket.setLocked(false)).wait();
+  }
+  if (farmFactoryLocked) {
+    await (await farmFactory.setLocked(false)).wait();
+  }
+  if (launcherLocked) {
+    await (await misoLauncher.setLocked(false)).wait();
+  }
+  if (tokenFactoryLocked) {
+    await (await misoTokenFactory.setLocked(false)).wait();
+  }
+
+  console.log("Unlocked!");
+});
+
+task("lock", "Locks MISO").setAction(async function (
+  _,
+  { ethers: { getNamedSigner, getContract } }
+) {
+  const admin = await getNamedSigner("admin");
+
+  const misoMarket = await getContract("MISOMarket", admin);
+  const farmFactory = await getContract("MISOFarmFactory", admin);
+  const misoLauncher = await getContract("MISOLauncher", admin);
+  const misoTokenFactory = await getContract("MISOTokenFactory", admin);
+
+  const marketLocked = await misoMarket.locked();
+  const farmFactoryLocked = await farmFactory.locked();
+  const launcherLocked = await misoLauncher.locked();
+  const tokenFactoryLocked = await misoTokenFactory.locked();
+
+  console.log("Locking ...");
+
+  if (!marketLocked) {
+    await (await misoMarket.setLocked(true)).wait();
+  }
+  if (!farmFactoryLocked) {
+    await (await farmFactory.setLocked(true)).wait();
+  }
+  if (!launcherLocked) {
+    await (await misoLauncher.setLocked(true)).wait();
+  }
+  if (!tokenFactoryLocked) {
+    await (await misoTokenFactory.setLocked(true)).wait();
+  }
+
+  console.log("Locked!");
+});
+
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   etherscan: {
@@ -105,7 +190,7 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
-      gasPrice: 20000000000,
+      gasPrice: 250000000000,
       gasMultiplier: 2,
     },
     kovan: {

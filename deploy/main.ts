@@ -27,7 +27,7 @@ export default async ({
   // Make sure you set the correct admin
 
   //  When deployed, should the contracts be unlocked?
-  const unlock = false;
+  const unlock = true;
 
   // get the bentobox address
   // const bentoBox = await contracts.deployContract("BoringFactory", deployer)

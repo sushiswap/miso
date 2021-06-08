@@ -25,20 +25,16 @@ export default {
       deterministicDeployment: false,
     });
 
-    // const accessControl = await ethers.getContractAt(
-    //   "MISOAccessControls",
-    //   address
-    // );
+    const accessControl = await ethers.getContractAt(
+      "MISOAccessControls",
+      address
+    );
 
-    //   if (!(await accessControl.hasAdminRole(deployer))) {
-
-    //   }
-
-    // await (
-    //   await accessControl.initAccessControls(deployer, {
-    //     from: deployer,
-    //   })
-    // ).wait();
+    await (
+      await accessControl.initAccessControls(deployer, {
+        from: deployer,
+      })
+    ).wait();
 
     return address;
 
