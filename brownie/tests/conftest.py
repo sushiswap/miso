@@ -199,6 +199,48 @@ def point_list(PointList):
 
 
 #####################################
+# Max List
+######################################
+
+@pytest.fixture(scope='module', autouse=True)
+def max_list(MaxList):
+    max_list = MaxList.deploy({"from": accounts[0]})
+    max_list.initPointList(accounts[0], {"from": accounts[0]})
+    max_list.addOperatorRole(accounts[0], {'from': accounts[0]})
+
+    return max_list
+
+
+#####################################
+# Point Max List
+######################################
+
+@pytest.fixture(scope='module', autouse=True)
+def point_max_list(PointMaxList):
+    point_max_list = PointMaxList.deploy({"from": accounts[0]})
+    point_max_list.initPointList(accounts[0], {"from": accounts[0]})
+    point_max_list.addOperatorRole(accounts[0], {'from': accounts[0]})
+
+    return point_max_list
+
+
+#####################################
+# Merkle List
+######################################
+
+@pytest.fixture(scope='module', autouse=True)
+def merkle_list(MerkleList):
+    merkle_root = "0xadb51493ea39bc9fa6c2e13da61481c884759743c33b7158db2175b2845c58fc"
+
+    merkle_list = MerkleList.deploy({"from": accounts[0]})
+    merkle_list.initMerkleList(accounts[0], {"from": accounts[0]})
+    merkle_list.addOperatorRole(accounts[0], {'from': accounts[0]})
+    merkle_list.setMerkleRoot(merkle_root, {'from': accounts[0]})
+
+    return merkle_list
+
+
+#####################################
 # MISOMarket
 ######################################
 
