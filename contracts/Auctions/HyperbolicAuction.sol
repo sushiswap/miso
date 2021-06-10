@@ -66,6 +66,8 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     uint256 public constant override marketTemplate = 4;
     /// @dev The placeholder ETH address.
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    /// @dev The multiplier for decimal precision
+    uint256 private constant MISO_PRECISION = 1e18;
 
     /// @notice Main market variables.
     struct MarketInfo {
@@ -196,7 +198,8 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
      * @return Average token price.
      */
     function tokenPrice() public view returns (uint256) {
-        return uint256(marketStatus.commitmentsTotal).mul(1e18).div(uint256(marketInfo.totalTokens));
+        return uint256(marketStatus.commitmentsTotal).mul(MISO_PRECISION)
+            .mul(1e18).div(uint256(marketInfo.totalTokens)).div(MISO_PRECISION);
     }
 
     /**
@@ -440,11 +443,17 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     /** 
      * @notice How many tokens the user is able to claim.
      * @param _user Auction participant address.
-     * @return User commitments reduced by already claimed tokens.
+     * @return claimerCommitment User commitments reduced by already claimed tokens.
      */
-    function tokensClaimable(address _user) public view returns (uint256) {
-        uint256 tokensAvailable = commitments[_user].mul(1e18).div(clearingPrice());
-        return tokensAvailable.sub(claimed[_user]);
+    function tokensClaimable(address _user) public view returns (uint256 claimerCommitment) {
+        uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
+        claimerCommitment = commitments[_user].mul(MISO_PRECISION).mul(1e18)
+                                                    .div(clearingPrice()).div(MISO_PRECISION);
+        claimerCommitment = claimerCommitment.sub(claimed[_user]);
+
+        if(claimerCommitment > unclaimedTokens){
+            claimerCommitment = unclaimedTokens;
+        }
     }
 
 

@@ -62,6 +62,9 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
     /// @dev For different marketplace types, this must be incremented.
     uint256 public constant override marketTemplate = 3;
 
+    /// @dev The multiplier for decimal precision
+    uint256 private constant MISO_PRECISION = 1e18;
+
     /// @dev The placeholder ETH address.
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
@@ -248,7 +251,7 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
      */
     function _getTokenAmount(uint256 amount) internal view returns (uint256) { 
         if (marketStatus.commitmentsTotal == 0) return 0;
-        return amount.mul(1e18).div(tokenPrice());
+        return amount.mul(MISO_PRECISION).mul(1e18).div(tokenPrice()).div(MISO_PRECISION);
     }
 
     /**
@@ -256,7 +259,8 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
      * @return Token price.
      */
     function tokenPrice() public view returns (uint256) {
-        return uint256(marketStatus.commitmentsTotal).mul(1e18).div(uint256(marketInfo.totalTokens));
+        return uint256(marketStatus.commitmentsTotal).mul(MISO_PRECISION)
+            .mul(1e18).div(uint256(marketInfo.totalTokens)).div(MISO_PRECISION);
     }
 
 
@@ -335,12 +339,17 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
     /**
      * @notice How many tokens the user is able to claim.
      * @param _user Auction participant address.
-     * @return Tokens left to claim.
+     * @return claimerCommitment Tokens left to claim.
      */
-    function tokensClaimable(address _user) public view returns (uint256) {
+    function tokensClaimable(address _user) public view returns (uint256 claimerCommitment) {
         if (commitments[_user] == 0) return 0;
-        uint256 tokensAvailable = _getTokenAmount(commitments[_user]);
-        return tokensAvailable.sub(claimed[_user]);
+        uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
+        claimerCommitment = _getTokenAmount(commitments[_user]);
+        claimerCommitment = claimerCommitment.sub(claimed[_user]);
+
+        if(claimerCommitment > unclaimedTokens){
+            claimerCommitment = unclaimedTokens;
+        }
     }
 
     /**
