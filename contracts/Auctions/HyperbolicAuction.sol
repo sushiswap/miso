@@ -446,9 +446,9 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
      * @return claimerCommitment User commitments reduced by already claimed tokens.
      */
     function tokensClaimable(address _user) public view returns (uint256 claimerCommitment) {
+        if (commitments[_user] == 0) return 0;
         uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
-        claimerCommitment = commitments[_user].mul(MISO_PRECISION).mul(1e18)
-                                                    .div(clearingPrice()).div(MISO_PRECISION);
+        claimerCommitment = commitments[_user].mul(uint256(marketInfo.totalTokens)).div(uint256(marketStatus.commitmentsTotal));
         claimerCommitment = claimerCommitment.sub(claimed[_user]);
 
         if(claimerCommitment > unclaimedTokens){
