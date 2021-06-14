@@ -256,7 +256,8 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
      * @return Token price.
      */
     function tokenPrice() public view returns (uint256) {
-        return uint256(marketStatus.commitmentsTotal).mul(1e18).div(uint256(marketInfo.totalTokens));
+        return uint256(marketStatus.commitmentsTotal)
+            .mul(1e18).div(uint256(marketInfo.totalTokens));
     }
 
 
@@ -335,14 +336,19 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
     /**
      * @notice How many tokens the user is able to claim.
      * @param _user Auction participant address.
-     * @return Tokens left to claim.
+     * @return  claimerCommitment Tokens left to claim.
      */
-    function tokensClaimable(address _user) public view returns (uint256) {
+    function tokensClaimable(address _user) public view returns (uint256 claimerCommitment) {
         if (commitments[_user] == 0) return 0;
-        uint256 tokensAvailable = _getTokenAmount(commitments[_user]);
-        return tokensAvailable.sub(claimed[_user]);
-    }
+        uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
+        claimerCommitment = _getTokenAmount(commitments[_user]);
+        claimerCommitment = claimerCommitment.sub(claimed[_user]);
 
+        if(claimerCommitment > unclaimedTokens){
+            claimerCommitment = unclaimedTokens;
+        }
+    }
+    
     /**
      * @notice Checks if raised more than minimum amount.
      * @return True if tokens sold greater than or equals to the minimum commitment amount.
