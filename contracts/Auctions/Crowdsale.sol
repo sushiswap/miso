@@ -63,8 +63,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
     /// @notice The placeholder ETH address.
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    /// @dev The multiplier for decimal precision
-    uint256 private constant MISO_PRECISION = 1e18;
     /** 
     * @notice rate - How many token units a buyer gets per token or wei.
     * The rate is the conversion between wei and the smallest and indivisible token unit.
@@ -344,17 +342,14 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     }
 
     /**
-     * @notice Adjusts users commitment depending on amount already claimed and unclaimed tokens left.
-     * @return claimerCommitment How many tokens the user is able to claim.
+     * @notice How many tokens the user is able to claim.
+     * @param _user Auction participant address.
+     * @return Tokens left to claim.
      */
-    function tokensClaimable(address _user) public view returns (uint256 claimerCommitment) {
-        uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
-        claimerCommitment = _getTokenAmount(commitments[_user]);
-        claimerCommitment = claimerCommitment.sub(claimed[_user]);
-
-        if(claimerCommitment > unclaimedTokens){
-            claimerCommitment = unclaimedTokens;
-        }
+    function tokensClaimable(address _user) public view returns (uint256) {
+        if (commitments[_user] == 0) return 0;
+        uint256 tokensAvailable = _getTokenAmount(commitments[_user]);
+        return tokensAvailable.sub(claimed[_user]);
     }
     
     //--------------------------------------------------------
@@ -423,7 +418,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     }
 
     function _getTokenPrice(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(1e18).mul(MISO_PRECISION).div(uint256(marketPrice.rate)).div(MISO_PRECISION);   
+        return _amount.mul(1e18).div(uint256(marketPrice.rate));   
     }
 
 
