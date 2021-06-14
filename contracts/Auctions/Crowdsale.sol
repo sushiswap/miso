@@ -343,14 +343,17 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     }
 
     /**
-     * @notice How many tokens the user is able to claim.
-     * @param _user Auction participant address.
-     * @return Tokens left to claim.
+     * @notice Adjusts users commitment depending on amount already claimed and unclaimed tokens left.
+     * @return claimerCommitment How many tokens the user is able to claim.
      */
-    function tokensClaimable(address _user) public view returns (uint256) {
-        if (commitments[_user] == 0) return 0;
-        uint256 tokensAvailable = _getTokenAmount(commitments[_user]);
-        return tokensAvailable.sub(claimed[_user]);
+    function tokensClaimable(address _user) public view returns (uint256 claimerCommitment) {
+        uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
+        claimerCommitment = _getTokenAmount(commitments[_user]);
+        claimerCommitment = claimerCommitment.sub(claimed[_user]);
+
+        if(claimerCommitment > unclaimedTokens){
+            claimerCommitment = unclaimedTokens;
+        }
     }
     
     //--------------------------------------------------------
