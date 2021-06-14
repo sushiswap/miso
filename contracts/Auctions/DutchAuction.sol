@@ -336,7 +336,6 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      */
     function tokensClaimable(address _user) public view returns (uint256) {
         if (commitments[_user] == 0) return 0;
-
         uint256 tokensAvailable = commitments[_user].mul(uint256(marketInfo.totalTokens)).div(uint256(marketStatus.commitmentsTotal));
         return tokensAvailable.sub(claimed[_user]);
     }

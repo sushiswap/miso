@@ -248,7 +248,7 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
      */
     function _getTokenAmount(uint256 amount) internal view returns (uint256) { 
         if (marketStatus.commitmentsTotal == 0) return 0;
-        return amount.mul(uint256(marketInfo.totalTokens)).div(uint256(marketStatus.commitmentsTotal));
+        return amount.mul(1e18).div(tokenPrice());
     }
 
     /**

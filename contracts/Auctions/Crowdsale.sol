@@ -63,6 +63,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
     /// @notice The placeholder ETH address.
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+
     /** 
     * @notice rate - How many token units a buyer gets per token or wei.
     * The rate is the conversion between wei and the smallest and indivisible token unit.
@@ -450,12 +451,11 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
     /**
      * @notice Checks if the sale has ended.
-     * @dev Add 1 wei so that the minimum token amount is covered
      * @return auctionEnded True if successful or time has ended.
      */
     function auctionEnded() public view returns (bool) {
         return block.timestamp > uint256(marketInfo.endTime) || 
-        _getTokenAmount(uint256(marketStatus.commitmentsTotal) + 1) >= uint256(marketInfo.totalTokens);
+        _getTokenAmount(uint256(marketStatus.commitmentsTotal)) == uint256(marketInfo.totalTokens);
     }
 
     /**
