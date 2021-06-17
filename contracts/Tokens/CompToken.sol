@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 import "../interfaces/IMisoToken.sol";
 
-/// @notice Based on Compound Governance Token - 0xc00e94Cb662C3520282E6f5717214004A7f26888
-contract GovernanceToken is IMisoToken {
+/// @notice Template based on Compound Governance Token - 0xc00e94Cb662C3520282E6f5717214004A7f26888
+contract CompToken is IMisoToken {
     /// @notice Miso template id for the token factory.
     /// @dev For different token types, this must be incremented.
     uint256 public constant override tokenTemplate = 4;
@@ -15,12 +16,13 @@ contract GovernanceToken is IMisoToken {
     /// @notice EIP-20 token symbol for this token
     string public symbol;
 
-    /// @notice EIP-20 token decimals for this token
+    /// @notice EIP-20 token decimals for this token.
     uint8 public constant decimals = 18;
 
     /// @notice Total number of tokens in circulation
     uint public totalSupply;
     
+    /// @notice Internal status for clone token deployment
     bool private _initialized;
 
     /// @notice Allowance amounts on behalf of others
@@ -65,7 +67,7 @@ contract GovernanceToken is IMisoToken {
     /// @notice The standard EIP-20 approval event
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
-    /// @dev First set the token variables. This can only be done once
+    /// @dev First set the token variables. This can only be done once.
     function initToken(string memory _name, string memory _symbol, address _owner, uint256 _totalSupply) public {
         require(!_initialized, "token has already been initialized!");
         name = _name;
@@ -75,6 +77,7 @@ contract GovernanceToken is IMisoToken {
         _initialized = true;
         emit Transfer(address(0), _owner, _totalSupply);
     }
+    
     function init(bytes calldata _data) external override payable {}
 
     function initToken(
@@ -84,7 +87,6 @@ contract GovernanceToken is IMisoToken {
         string memory _symbol,
         address _owner,
         uint256 _totalSupply) = abi.decode(_data, (string, string, address, uint256));
-
         initToken(_name,_symbol,_owner,_totalSupply);
     }
 
