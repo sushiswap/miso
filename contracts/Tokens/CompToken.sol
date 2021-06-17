@@ -4,10 +4,10 @@ pragma experimental ABIEncoderV2;
 
 import "../interfaces/IMisoToken.sol";
 
-/// @notice Template based on Compound Governance Token - 0xc00e94Cb662C3520282E6f5717214004A7f26888
+/// @notice Template based on Compound Governance Token (0xc00e94Cb662C3520282E6f5717214004A7f26888)
 contract CompToken is IMisoToken {
-    /// @notice Miso template id for the token factory.
-    /// @dev For different token types, this must be incremented.
+    /// @notice Miso template id for the token factory
+    /// @dev For different token types, this must be incremented
     uint256 public constant override tokenTemplate = 4;
     
     /// @notice EIP-20 token name for this token
@@ -16,7 +16,7 @@ contract CompToken is IMisoToken {
     /// @notice EIP-20 token symbol for this token
     string public symbol;
 
-    /// @notice EIP-20 token decimals for this token.
+    /// @notice EIP-20 token decimals for this token
     uint8 public constant decimals = 18;
 
     /// @notice Total number of tokens in circulation
@@ -55,10 +55,10 @@ contract CompToken is IMisoToken {
     /// @notice A record of states for signing / validating signatures
     mapping (address => uint) public nonces;
 
-    /// @notice An event thats emitted when an account changes its delegate
+    /// @notice An event that's emitted when an account changes its delegate
     event DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate);
 
-    /// @notice An event thats emitted when a delegate account's vote balance changes
+    /// @notice An event that's emitted when a delegate account's vote balance changes
     event DelegateVotesChanged(address indexed delegate, uint previousBalance, uint newBalance);
 
     /// @notice The standard EIP-20 transfer event
@@ -67,7 +67,7 @@ contract CompToken is IMisoToken {
     /// @notice The standard EIP-20 approval event
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
-    /// @dev First set the token variables. This can only be done once.
+    /// @dev First set the token variables - this can only be done once
     function initToken(string memory _name, string memory _symbol, address _owner, uint256 _totalSupply) public {
         require(!_initialized, "token has already been initialized!");
         name = _name;
