@@ -418,13 +418,23 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     }
 
     function tokenPrice() public view returns (uint256) {
-        return _getTokenPrice(1e18);   
+        return _getTokenPrice(10**uint256(paymentDecimals()));   
     }
 
     function _getTokenPrice(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(1e18).div(uint256(marketPrice.rate));   
+        return _amount.mul(10**uint256(IERC20(auctionToken).decimals())).div(uint256(marketPrice.rate));   
     }
 
+    function paymentDecimals() public view returns (uint8) {
+        if (paymentCurrency == ETH_ADDRESS) {
+            return 18;
+        }
+        return IERC20(paymentCurrency).decimals();
+    }
+
+    function getTokenAmount(uint256 _amount) public view returns (uint256) {
+        _getTokenAmount(_amount);
+    }
 
     /**
      * @notice Calculates the number of tokens to purchase.
@@ -433,7 +443,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      * @return tokenAmount Number of tokens that can be purchased with the specified amount.
      */
     function _getTokenAmount(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(uint256(marketPrice.rate)).div(1e18);
+        return _amount.mul(uint256(marketPrice.rate)).div(10**uint256(paymentDecimals()));
     }
 
     /**

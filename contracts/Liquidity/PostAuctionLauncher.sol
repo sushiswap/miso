@@ -141,6 +141,10 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
             token1 = IERC20(weth);
         }
 
+        uint256 d1 = uint256(token1.decimals());
+        uint256 d2 = uint256(token2.decimals());
+        require(d2 >= d1);
+
         factory = IUniswapV2Factory(_factory);
         bytes32 pairCodeHash = IUniswapV2Factory(_factory).pairCodeHash();
         tokenPair = UniswapV2Library.pairFor(_factory, address(token1), address(token2), pairCodeHash);
@@ -259,14 +263,19 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
         emit LiquidityAdded(liquidity);
     }
 
+
     function getTokenAmounts() public view returns (uint256 token1Amount, uint256 token2Amount) {
         token1Amount = getToken1Balance().mul(uint256(launcherInfo.liquidityPercent)).div(LIQUIDITY_PRECISION);
         token2Amount = getToken2Balance();
 
         uint256 tokenPrice = market.tokenPrice();
-        uint256 maxToken1Amount = token2Amount.mul(tokenPrice).div(1e18);
-        uint256 maxToken2Amount = token1Amount.mul(1e18).div(tokenPrice);
-        
+        uint256 d1 = uint256(token1.decimals());
+        uint256 d2 = uint256(token2.decimals());
+        uint256 maxToken1Amount = token2Amount.mul(tokenPrice).div(10**(d2+d2-d1));
+        uint256 maxToken2Amount = token1Amount
+                                    .mul(10**(d2+d2-d1))
+                                    .div(tokenPrice);
+
         /// @dev if more than the max.
         if (token2Amount > maxToken2Amount) {
             token2Amount =  maxToken2Amount;
@@ -275,6 +284,7 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
         if (token1Amount > maxToken1Amount) {
             token1Amount =  maxToken1Amount;
         }
+
     }
 
     /**
@@ -307,7 +317,6 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
 
     // TODO     
     // GP: Sweep non relevant ERC20s / ETH
-
 
 
     //--------------------------------------------------------
