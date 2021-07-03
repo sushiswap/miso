@@ -425,13 +425,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         return _amount.mul(uint256(marketPrice.rate)).div(10**uint256(IERC20(auctionToken).decimals()));   
     }
 
-    function paymentDecimals() public view returns (uint8) {
-        if (paymentCurrency == ETH_ADDRESS) {
-            return 18;
-        }
-        return IERC20(paymentCurrency).decimals();
-    }
-
     function getTokenAmount(uint256 _amount) public view returns (uint256) {
         _getTokenAmount(_amount);
     }
