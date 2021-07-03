@@ -154,8 +154,8 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         address _pointList,
         address payable _wallet
     ) public {
-        require(_startTime < 10000000000, 'Crowdsale: enter an unix timestamp in seconds, not miliseconds');
-        require(_endTime < 10000000000, 'Crowdsale: enter an unix timestamp in seconds, not miliseconds');
+        require(_startTime < 10000000000, "Crowdsale: enter an unix timestamp in seconds, not miliseconds");
+        require(_endTime < 10000000000, "Crowdsale: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "Crowdsale: start time is before current time");
         require(_endTime > _startTime, "Crowdsale: start time is not before end time");
         require(_rate > 0, "Crowdsale: rate is 0");
@@ -183,7 +183,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
         _setList(_pointList);
         
-        require(_getTokenAmount(_goal) <= _totalTokens, "Crowdsale: goal should be equal to or lower than total tokens or equal");
+        require(_getTokenAmount(_goal) <= _totalTokens, "Crowdsale: goal should be equal to or lower than total tokens");
 
         _safeTransferFrom(_token, _funder, _totalTokens);
     }
@@ -201,7 +201,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      * @dev Attribution to the awesome delta.financial contracts
     */  
     function marketParticipationAgreement() public pure returns (string memory) {
-        return "I understand that I'm interacting with a smart contract. I understand that tokens commited are subject to the token issuer and local laws where applicable. I reviewed code of the smart contract and understand it fully. I agree to not hold developers or other people associated with the project liable for any losses or misunderstandings";
+        return "I understand that I am interacting with a smart contract. I understand that tokens commited are subject to the token issuer and local laws where applicable. I reviewed code of the smart contract and understand it fully. I agree to not hold developers or other people associated with the project liable for any losses or misunderstandings";
     }
     /** 
      * @dev Not using modifiers is a purposeful choice for code readability.
@@ -213,7 +213,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     /**
      * @notice Checks the amount of ETH to commit and adds the commitment. Refunds the buyer if commit is too high.
      * @dev low level token purchase with ETH ***DO NOT OVERRIDE***
-     * This function has a non-reentrancy guard, so it shouldn't be called by
+     * This function has a non-reentrancy guard, so it should not be called by
      * another `nonReentrant` function.
      * @param _beneficiary Recipient of the token purchase.
      */
@@ -276,7 +276,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     }
 
     /**
-     * @notice Checks if the commitment doesn't exceed the goal of this sale.
+     * @notice Checks if the commitment does not exceed the goal of this sale.
      * @param _commitment Number of tokens to be commited.
      * @return committed The amount able to be purchased during a sale.
      */
@@ -459,17 +459,16 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      * @return auctionSuccessful True if the commitmentsTotal is equal or higher than goal.
      */
     function auctionSuccessful() public view returns (bool) {
-        return uint256(marketStatus.commitmentsTotal) >= uint256(marketPrice.goal) ||
-            _getTokenAmount(uint256(marketStatus.commitmentsTotal) + 1) >= uint256(marketInfo.totalTokens);
+        return uint256(marketStatus.commitmentsTotal) >= uint256(marketPrice.goal);
     }
 
     /**
      * @notice Checks if the sale has ended.
-     * @return auctionEnded True if successful or time has ended.
+     * @return auctionEnded True if sold out or time has ended.
      */
     function auctionEnded() public view returns (bool) {
         return block.timestamp > uint256(marketInfo.endTime) || 
-        _getTokenAmount(uint256(marketStatus.commitmentsTotal)) == uint256(marketInfo.totalTokens);
+        _getTokenAmount(uint256(marketStatus.commitmentsTotal) + 1) >= uint256(marketInfo.totalTokens);
     }
 
     /**

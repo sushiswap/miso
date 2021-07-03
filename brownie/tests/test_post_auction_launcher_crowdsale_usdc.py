@@ -83,12 +83,12 @@ def test_post_auction_launcher_crowdsale(post_auction_launcher_crowdsale, usdc_t
     token1Amount,token2Amount = post_auction_launcher_crowdsale.getTokenAmounts()
     print("return of getTokenAmounts function for token1 before launching: ", token1Amount/TENPOW6)
     print("return of getTokenAmounts function for token2 before launching ", token2Amount/TENPOW18)
-   ## Check this:
+    ## Check this:
     # assert token1Amount/TENPOW6 ==  post_auction_launcher_crowdsale.getToken1Balance()/TENPOW6 * _liquidityPercent / 10000
     # assert token2Amount/TENPOW18 ==  post_auction_launcher_crowdsale.getToken2Balance()/TENPOW18 * _liquidityPercent / 10000
 
     liquidity_generated = post_auction_launcher_crowdsale.finalize({"from":accounts[0]}).return_value
-    print("liquidity generate: ", liquidity_generated/TENPOW18)
+    print("liquidity generated: ", liquidity_generated/TENPOW6)
     assert liquidity_generated > 1 * TENPOW6
     
 def test_withdraw_lp_tokens(UniswapV2Pair, post_auction_launcher_crowdsale, usdc_token, fixed_token_cal, crowdsale_usdc):
@@ -245,7 +245,7 @@ def _crowdsale_helper(Crowdsale,token_to_auction, token_for_payment, operator):
         start_time,
         end_time,
         CROWDSALE_RATE_USDC_2,
-        CROWDSALE_GOAL_USDC,
+        CROWDSALE_GOAL_USDC_2,
         operator,
         ZERO_ADDRESS,
         wallet,

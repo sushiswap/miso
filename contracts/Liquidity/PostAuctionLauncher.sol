@@ -99,7 +99,8 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
     event LiquidityAdded(uint256 liquidity);
     /// @notice Emitted when wallet is updated.
     event WalletUpdated(address indexed wallet);
-
+    /// @notice Emitted when launcher is cancelled.
+    event LauncherCancelled(address indexed wallet);
 
     constructor (address _weth) public {
         weth = _weth;
@@ -266,14 +267,13 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
 
     function getTokenAmounts() public view returns (uint256 token1Amount, uint256 token2Amount) {
         token1Amount = getToken1Balance().mul(uint256(launcherInfo.liquidityPercent)).div(LIQUIDITY_PRECISION);
-        token2Amount = getToken2Balance();
+        token2Amount = getToken2Balance(); 
 
-        uint256 tokenPrice = market.tokenPrice();
-        uint256 d1 = uint256(token1.decimals());
+        uint256 tokenPrice = market.tokenPrice();  
         uint256 d2 = uint256(token2.decimals());
-        uint256 maxToken1Amount = token2Amount.mul(tokenPrice).div(10**(d2+d2-d1));
+        uint256 maxToken1Amount = token2Amount.mul(tokenPrice).div(10**(d2));
         uint256 maxToken2Amount = token1Amount
-                                    .mul(10**(d2+d2-d1))
+                                    .mul(10**(d2))
                                     .div(tokenPrice);
 
         /// @dev if more than the max.
@@ -335,6 +335,15 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
         wallet = _wallet;
 
         emit WalletUpdated(_wallet);
+    }
+
+    function cancelLauncher() external {
+        require(hasAdminRole(msg.sender));
+        require(!launcherInfo.launched);
+
+        launcherInfo.launched = true;
+        emit LauncherCancelled(msg.sender);
+
     }
 
     //--------------------------------------------------------
