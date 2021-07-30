@@ -64,6 +64,9 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     /// @notice The placeholder ETH address.
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
+    /// @notice The decimals of the auction token.
+    uint256 private constant AUCTION_TOKEN_DECIMALS = 1e18;
+
     /** 
     * @notice rate - How many token units a buyer gets per token or wei.
     * The rate is the conversion between wei and the smallest and indivisible token unit.
@@ -422,7 +425,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     }
 
     function _getTokenPrice(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(uint256(marketPrice.rate)).div(10**uint256(IERC20(auctionToken).decimals()));   
+        return _amount.mul(uint256(marketPrice.rate)).div(AUCTION_TOKEN_DECIMALS);   
     }
 
     function getTokenAmount(uint256 _amount) public view returns (uint256) {
@@ -436,7 +439,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      * @return tokenAmount Number of tokens that can be purchased with the specified amount.
      */
     function _getTokenAmount(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(10**uint256(IERC20(auctionToken).decimals())).div(uint256(marketPrice.rate));
+        return _amount.mul(AUCTION_TOKEN_DECIMALS).div(uint256(marketPrice.rate));
     }
 
     /**
