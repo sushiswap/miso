@@ -339,6 +339,7 @@ contract MISOMarket is SafeTransfer {
             auctionTemplateToId[_template] == 0,
             "MISOMarket: Template already exists"
         );
+        require(_template != address(0), "MISOMarket: Incorrect template");
         require(auctionTemplateToId[_template] == 0, "MISOMarket: Template already added");
         uint256 templateType = IMisoMarket(_template).marketTemplate();
         require(templateType > 0, "MISOMarket: Incorrect template code ");
