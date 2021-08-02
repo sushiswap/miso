@@ -199,6 +199,8 @@ contract MISOMarket is SafeTransfer {
             accessControls.hasAdminRole(msg.sender),
             "MISOMarket: Sender must be admin"
         );
+        require(auctionTemplates[_templateId] != address(0), "MISOMarket: incorrect _templateId");
+        require(IMisoMarket(auctionTemplates[_templateId]).marketTemplate() == _templateType, "MISOMarket: incorrect _templateType");
         currentTemplateId[_templateType] = _templateId;
     }
 
