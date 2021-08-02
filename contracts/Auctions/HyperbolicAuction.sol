@@ -547,6 +547,10 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
 
         marketInfo.startTime = BoringMath.to64(_startTime);
         marketInfo.endTime = BoringMath.to64(_endTime);
+
+        uint64 _duration = marketInfo.endTime - marketInfo.startTime;        
+        uint256 _alpha = uint256(_duration).mul(uint256(marketPrice.minimumPrice));
+        marketPrice.alpha = BoringMath.to128(_alpha);
         
         emit AuctionTimeUpdated(_startTime,_endTime);
     }
@@ -561,6 +565,10 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
         require(marketStatus.commitmentsTotal == 0, "HyperbolicAuction: auction cannot have already started");
 
         marketPrice.minimumPrice = BoringMath.to128(_minimumPrice);
+
+        uint64 _duration = marketInfo.endTime - marketInfo.startTime;        
+        uint256 _alpha = uint256(_duration).mul(uint256(marketPrice.minimumPrice));
+        marketPrice.alpha = BoringMath.to128(_alpha);
 
         emit AuctionPriceUpdated(_minimumPrice);
     }
