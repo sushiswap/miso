@@ -321,6 +321,10 @@ contract MISOMarket is SafeTransfer {
             "MISOMarket: Sender must be operator"
         );
         address template = auctionTemplates[_templateId];
+        uint256 templateType = IMisoMarket(template).marketTemplate();
+        if (currentTemplateId[templateType] == _templateId) {
+            delete currentTemplateId[templateType];
+        }   
         auctionTemplates[_templateId] = address(0);
         delete auctionTemplateToId[template];
         emit AuctionTemplateRemoved(template, _templateId);

@@ -305,6 +305,10 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         );
         require(tokenTemplates[_templateId] != address(0));
         address template = tokenTemplates[_templateId];
+        uint256 templateType = IMisoToken(tokenTemplates[_templateId]).tokenTemplate();
+        if (currentTemplateId[templateType] == _templateId) {
+            delete currentTemplateId[templateType];
+        }
         tokenTemplates[_templateId] = address(0);
         delete tokenTemplateToId[template];
         emit TokenTemplateRemoved(template, _templateId);
