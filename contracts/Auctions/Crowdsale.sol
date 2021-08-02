@@ -561,10 +561,9 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         require(_goal > 0, "Crowdsale: goal is 0");
         require(_rate > 0, "Crowdsale: rate is 0");
         require(marketStatus.commitmentsTotal == 0, "Crowdsale: auction cannot have already started");
-        require(_getTokenAmount(_goal) <= uint256(marketInfo.totalTokens), "Crowdsale: minimum target exceeds hard cap");
-
         marketPrice.rate = BoringMath.to128(_rate);
         marketPrice.goal = BoringMath.to128(_goal);
+        require(_getTokenAmount(_goal) <= uint256(marketInfo.totalTokens), "Crowdsale: minimum target exceeds hard cap");
 
         emit AuctionPriceUpdated(_rate,_goal);
     }
