@@ -379,11 +379,11 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         MarketStatus storage status = marketStatus;
         require(!status.finalized, "Crowdsale: already finalized");
         MarketInfo storage info = marketInfo;
+        require(auctionEnded(), "Crowdsale: Has not finished yet"); 
 
         if (auctionSuccessful()) {
             /// @dev Successful auction
             /// @dev Transfer contributed tokens to wallet.
-            require(auctionEnded(), "Crowdsale: Has not finished yet"); 
             _safeTokenPayment(paymentCurrency, wallet, uint256(status.commitmentsTotal));
             /// @dev Transfer unsold tokens to wallet.
             uint256 soldTokens = _getTokenAmount(uint256(status.commitmentsTotal));
@@ -394,7 +394,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
-            require(auctionEnded(), "Crowdsale: Has not finished yet"); 
             _safeTokenPayment(auctionToken, wallet, uint256(info.totalTokens));
         }
 
