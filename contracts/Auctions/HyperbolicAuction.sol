@@ -180,7 +180,6 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
          // factor = exponent which can later be used to alter the curve
         uint256 _duration = _endTime - _startTime;
         uint256 _alpha = _duration.mul(_minimumPrice);
-        require (_alpha > 0);
         marketPrice.alpha = BoringMath.to128(_alpha);
 
         _safeTransferFrom(_token, _funder, _totalTokens);
