@@ -200,7 +200,7 @@ contract USDC is IERC20, Context {
             );
         address recoveredAddress = ecrecover(digest, v, r, s);
         require(recoveredAddress == owner_, "ERC20: Invalid Signature");
-        _approve(_msgSender(), spender, value);
+        _approve(owner_, spender, value);
 
     }
 
