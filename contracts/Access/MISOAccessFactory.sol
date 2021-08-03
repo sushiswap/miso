@@ -74,8 +74,8 @@ contract MISOAccessFactory is CloneFactory {
      * @param _admin Address of admin access.
      */
     function deployAccessControl(address _admin) external payable returns (address access) {
-        require(msg.value >= minimumFee);
-        require(accessControlTemplate != address(0));
+        require(msg.value >= minimumFee, "Minimum fee needs to be paid.");
+        require(accessControlTemplate != address(0), "Access control template does not exist");
         access = createClone(accessControlTemplate);
         isChild[address(access)] = true;
         children.push(address(access));

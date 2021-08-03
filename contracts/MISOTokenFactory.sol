@@ -283,7 +283,7 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         );
         uint256 templateType = IMisoToken(_template).tokenTemplate();
         require(templateType > 0, "MISOLauncher: Incorrect template code ");
-        require(tokenTemplateToId[_template] == 0);
+        require(tokenTemplateToId[_template] == 0, "MISOTokenFactory: Template exists");
         tokenTemplateId++;
         tokenTemplates[tokenTemplateId] = _template;
         tokenTemplateToId[_template] = tokenTemplateId;
