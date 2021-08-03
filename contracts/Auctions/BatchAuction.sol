@@ -282,7 +282,6 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
-            require(block.timestamp > marketInfo.endTime, "BatchAuction: Auction has not finished yet");
             _safeTokenPayment(auctionToken, wallet, marketInfo.totalTokens);
         }
         marketStatus.finalized = true;

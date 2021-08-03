@@ -335,10 +335,6 @@ contract MISOMarket is SafeTransfer {
      * @param _template Auction template address to create an auction.
      */
     function _addAuctionTemplate(address _template) internal {
-        require(
-            auctionTemplateToId[_template] == 0,
-            "MISOMarket: Template already exists"
-        );
         require(_template != address(0), "MISOMarket: Incorrect template");
         require(auctionTemplateToId[_template] == 0, "MISOMarket: Template already added");
         uint256 templateType = IMisoMarket(_template).marketTemplate();
