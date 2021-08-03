@@ -386,7 +386,7 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     }
 
     /**
-     * @return Returns true if 14 days have passed since the end of the auction
+     * @return Returns true if 7 days have passed since the end of the auction
      */
     function finalizeTimeExpired() public view returns (bool) {
         return uint256(marketInfo.endTime) + 7 days < block.timestamp;
