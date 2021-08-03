@@ -63,8 +63,8 @@ contract PointList is IPointList, MISOAccessControls {
      */
     function setPoints(address[] memory _accounts, uint256[] memory _amounts) external override {
         require(hasAdminRole(msg.sender) || hasOperatorRole(msg.sender), "PointList.setPoints: Sender must be operator");
-        require(_accounts.length != 0);
-        require(_accounts.length == _amounts.length);
+        require(_accounts.length != 0, "PointList.setPoints: empty array");
+        require(_accounts.length == _amounts.length, "PointList.setPoints: incorrect array length");
         for (uint i = 0; i < _accounts.length; i++) {
             address account = _accounts[i];
             uint256 amount = _amounts[i];

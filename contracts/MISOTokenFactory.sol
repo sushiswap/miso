@@ -188,6 +188,8 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
             accessControls.hasOperatorRole(msg.sender),
             "MISOTokenFactory: Sender must be admin"
         );
+        require(tokenTemplates[_templateId] != address(0), "MISOMarket: incorrect _templateId");
+        require(IMisoToken(tokenTemplates[_templateId]).tokenTemplate() == _templateType, "MISOMarket: incorrect _templateType");
         currentTemplateId[_templateType] = _templateId;
     }
 
@@ -233,9 +235,9 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         }
         token = createClone(tokenTemplates[_templateId]);
         /// @dev GP: Triple check the token index is correct.
-        tokenInfo[address(token)] = Token(true, _templateId, tokens.length);
-        tokens.push(address(token));
-        emit TokenCreated(msg.sender, address(token), tokenTemplates[_templateId]);
+        tokenInfo[token] = Token(true, _templateId, tokens.length);
+        tokens.push(token);
+        emit TokenCreated(msg.sender, token, tokenTemplates[_templateId]);
         if (misoFee > 0) {
             misoDiv.transfer(misoFee);
         }
@@ -281,7 +283,7 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         );
         uint256 templateType = IMisoToken(_template).tokenTemplate();
         require(templateType > 0, "MISOLauncher: Incorrect template code ");
-        require(tokenTemplateToId[_template] == 0);
+        require(tokenTemplateToId[_template] == 0, "MISOTokenFactory: Template exists");
         tokenTemplateId++;
         tokenTemplates[tokenTemplateId] = _template;
         tokenTemplateToId[_template] = tokenTemplateId;
@@ -303,6 +305,10 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         );
         require(tokenTemplates[_templateId] != address(0));
         address template = tokenTemplates[_templateId];
+        uint256 templateType = IMisoToken(tokenTemplates[_templateId]).tokenTemplate();
+        if (currentTemplateId[templateType] == _templateId) {
+            delete currentTemplateId[templateType];
+        }
         tokenTemplates[_templateId] = address(0);
         delete tokenTemplateToId[template];
         emit TokenTemplateRemoved(template, _templateId);

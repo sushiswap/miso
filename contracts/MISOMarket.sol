@@ -199,6 +199,8 @@ contract MISOMarket is SafeTransfer {
             accessControls.hasAdminRole(msg.sender),
             "MISOMarket: Sender must be admin"
         );
+        require(auctionTemplates[_templateId] != address(0), "MISOMarket: incorrect _templateId");
+        require(IMisoMarket(auctionTemplates[_templateId]).marketTemplate() == _templateType, "MISOMarket: incorrect _templateType");
         currentTemplateId[_templateType] = _templateId;
     }
 
@@ -247,9 +249,9 @@ contract MISOMarket is SafeTransfer {
 
         /// @dev Deploy using the BentoBox factory. 
         newMarket = bentoBox.deploy(auctionTemplate, "", false);
-        auctionInfo[address(newMarket)] = Auction(true, BoringMath.to64(_templateId), BoringMath.to128(auctions.length));
-        auctions.push(address(newMarket));
-        emit MarketCreated(msg.sender, address(newMarket), auctionTemplate);
+        auctionInfo[newMarket] = Auction(true, BoringMath.to64(_templateId), BoringMath.to128(auctions.length));
+        auctions.push(newMarket);
+        emit MarketCreated(msg.sender, newMarket, auctionTemplate);
         if (misoFee > 0) {
             misoDiv.transfer(misoFee);
         }
@@ -319,6 +321,10 @@ contract MISOMarket is SafeTransfer {
             "MISOMarket: Sender must be operator"
         );
         address template = auctionTemplates[_templateId];
+        uint256 templateType = IMisoMarket(template).marketTemplate();
+        if (currentTemplateId[templateType] == _templateId) {
+            delete currentTemplateId[templateType];
+        }   
         auctionTemplates[_templateId] = address(0);
         delete auctionTemplateToId[template];
         emit AuctionTemplateRemoved(template, _templateId);
@@ -329,10 +335,7 @@ contract MISOMarket is SafeTransfer {
      * @param _template Auction template address to create an auction.
      */
     function _addAuctionTemplate(address _template) internal {
-        require(
-            auctionTemplateToId[_template] == 0,
-            "MISOMarket: Template already exists"
-        );
+        require(_template != address(0), "MISOMarket: Incorrect template");
         require(auctionTemplateToId[_template] == 0, "MISOMarket: Template already added");
         uint256 templateType = IMisoMarket(_template).marketTemplate();
         require(templateType > 0, "MISOMarket: Incorrect template code ");

@@ -30,6 +30,7 @@ contract MISOAdminAccess is AccessControl {
      */
     function initAccessControls(address _admin) public {
         require(!initAccess, "Already initialised");
+        require(_admin != address(0), "Incorrect input");
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
         initAccess = true;
     }

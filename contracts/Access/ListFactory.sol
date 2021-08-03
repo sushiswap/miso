@@ -92,6 +92,8 @@ contract ListFactory is CloneFactory, SafeTransfer {
      */
     function initListFactory(address _accessControls, address _pointListTemplate, uint256 _minimumFee) external  {
         require(!initialised);
+        require(_accessControls != address(0), "Incorrect access controls");
+        require(_pointListTemplate != address(0), "Incorrect list template");
         accessControls = MISOAccessControls(_accessControls);
         pointListTemplate = _pointListTemplate;
         minimumFee = _minimumFee;

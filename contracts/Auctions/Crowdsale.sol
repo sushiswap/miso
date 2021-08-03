@@ -379,11 +379,11 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         MarketStatus storage status = marketStatus;
         require(!status.finalized, "Crowdsale: already finalized");
         MarketInfo storage info = marketInfo;
+        require(auctionEnded(), "Crowdsale: Has not finished yet"); 
 
         if (auctionSuccessful()) {
             /// @dev Successful auction
             /// @dev Transfer contributed tokens to wallet.
-            require(auctionEnded(), "Crowdsale: Has not finished yet"); 
             _safeTokenPayment(paymentCurrency, wallet, uint256(status.commitmentsTotal));
             /// @dev Transfer unsold tokens to wallet.
             uint256 soldTokens = _getTokenAmount(uint256(status.commitmentsTotal));
@@ -394,7 +394,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
-            require(auctionEnded(), "Crowdsale: Has not finished yet"); 
             _safeTokenPayment(auctionToken, wallet, uint256(info.totalTokens));
         }
 
@@ -561,10 +560,9 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         require(_goal > 0, "Crowdsale: goal is 0");
         require(_rate > 0, "Crowdsale: rate is 0");
         require(marketStatus.commitmentsTotal == 0, "Crowdsale: auction cannot have already started");
-        require(_getTokenAmount(_goal) <= uint256(marketInfo.totalTokens), "Crowdsale: minimum target exceeds hard cap");
-
         marketPrice.rate = BoringMath.to128(_rate);
         marketPrice.goal = BoringMath.to128(_goal);
+        require(_getTokenAmount(_goal) <= uint256(marketInfo.totalTokens), "Crowdsale: minimum target exceeds hard cap");
 
         emit AuctionPriceUpdated(_rate,_goal);
     }

@@ -247,12 +247,14 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
         internal
     {
         address currentDelegate = _delegates[delegator];
-        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying SUSHIs (not scaled);
-        _delegates[delegator] = delegatee;
+        if (currentDelegate != delegatee){
+            uint256 delegatorBalance = balanceOf(delegator); // balance of underlying SUSHIs (not scaled);
+            _delegates[delegator] = delegatee;
 
-        emit DelegateChanged(delegator, currentDelegate, delegatee);
+            emit DelegateChanged(delegator, currentDelegate, delegatee);
 
-        _moveDelegates(currentDelegate, delegatee, delegatorBalance);
+            _moveDelegates(currentDelegate, delegatee, delegatorBalance);
+        }
     }
 
     function _moveDelegates(address srcRep, address dstRep, uint256 amount) internal {

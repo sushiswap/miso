@@ -180,7 +180,6 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
          // factor = exponent which can later be used to alter the curve
         uint256 _duration = _endTime - _startTime;
         uint256 _alpha = _duration.mul(_minimumPrice);
-        require (_alpha > 0);
         marketPrice.alpha = BoringMath.to128(_alpha);
 
         _safeTransferFrom(_token, _funder, _totalTokens);
@@ -386,7 +385,7 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     }
 
     /**
-     * @return Returns true if 14 days have passed since the end of the auction
+     * @return Returns true if 7 days have passed since the end of the auction
      */
     function finalizeTimeExpired() public view returns (bool) {
         return uint256(marketInfo.endTime) + 7 days < block.timestamp;
@@ -547,6 +546,10 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
 
         marketInfo.startTime = BoringMath.to64(_startTime);
         marketInfo.endTime = BoringMath.to64(_endTime);
+
+        uint64 _duration = marketInfo.endTime - marketInfo.startTime;        
+        uint256 _alpha = uint256(_duration).mul(uint256(marketPrice.minimumPrice));
+        marketPrice.alpha = BoringMath.to128(_alpha);
         
         emit AuctionTimeUpdated(_startTime,_endTime);
     }
@@ -561,6 +564,10 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
         require(marketStatus.commitmentsTotal == 0, "HyperbolicAuction: auction cannot have already started");
 
         marketPrice.minimumPrice = BoringMath.to128(_minimumPrice);
+
+        uint64 _duration = marketInfo.endTime - marketInfo.startTime;        
+        uint256 _alpha = uint256(_duration).mul(uint256(marketPrice.minimumPrice));
+        marketPrice.alpha = BoringMath.to128(_alpha);
 
         emit AuctionPriceUpdated(_minimumPrice);
     }
