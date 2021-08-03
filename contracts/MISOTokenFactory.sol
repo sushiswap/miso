@@ -235,9 +235,9 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         }
         token = createClone(tokenTemplates[_templateId]);
         /// @dev GP: Triple check the token index is correct.
-        tokenInfo[address(token)] = Token(true, _templateId, tokens.length);
-        tokens.push(address(token));
-        emit TokenCreated(msg.sender, address(token), tokenTemplates[_templateId]);
+        tokenInfo[token] = Token(true, _templateId, tokens.length);
+        tokens.push(token);
+        emit TokenCreated(msg.sender, token, tokenTemplates[_templateId]);
         if (misoFee > 0) {
             misoDiv.transfer(misoFee);
         }

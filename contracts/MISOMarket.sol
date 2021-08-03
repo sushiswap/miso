@@ -249,9 +249,9 @@ contract MISOMarket is SafeTransfer {
 
         /// @dev Deploy using the BentoBox factory. 
         newMarket = bentoBox.deploy(auctionTemplate, "", false);
-        auctionInfo[address(newMarket)] = Auction(true, BoringMath.to64(_templateId), BoringMath.to128(auctions.length));
-        auctions.push(address(newMarket));
-        emit MarketCreated(msg.sender, address(newMarket), auctionTemplate);
+        auctionInfo[newMarket] = Auction(true, BoringMath.to64(_templateId), BoringMath.to128(auctions.length));
+        auctions.push(newMarket);
+        emit MarketCreated(msg.sender, newMarket, auctionTemplate);
         if (misoFee > 0) {
             misoDiv.transfer(misoFee);
         }
