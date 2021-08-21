@@ -338,6 +338,23 @@ rule noCommitmentsBeforeOpen(method f)
 	assert (commitments(user) > 0 => e.block.timestamp >= startTime_);
 }
 
+rule beneficiaryClaimableTokensShouldDecrease() {
+    env e;
+    address user;
+
+    assumeInitState();
+
+    require isInitialized() && auctionSuccessful(e) && tokensClaimable(e, user) != 0;
+
+    uint256 _userClaimableTokens = tokensClaimable(e, user);
+
+    withdrawTokens(e, user);
+
+    uint256 userClaimableTokens_ = tokensClaimable(e, user);
+
+    assert(auctionSuccessful(e) && userClaimableTokens_ < _userClaimableTokens);
+}
+
 // Rules that are timing out.
 /*
 rule additivityOfCommitEth(address user, address beneficiary, uint256 x, uint256 y) {
