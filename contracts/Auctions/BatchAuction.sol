@@ -195,6 +195,9 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
             revertBecauseUserDidNotProvideAgreement();
         }
         _addCommitment(_beneficiary, msg.value);
+
+        /// @notice Revert if commitmentsTotal exceeds the balance
+        require(marketStatus.commitmentsTotal <= address(this).balance, "DutchAuction: The committed ETH exceeds the balance");
     }
 
     /**

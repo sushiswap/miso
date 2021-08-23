@@ -244,6 +244,9 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         if (ethToRefund > 0) {
             _beneficiary.transfer(ethToRefund);
         }
+
+        /// @notice Revert if commitmentsTotal exceeds the balance
+        require(marketStatus.commitmentsTotal <= address(this).balance, "DutchAuction: The committed ETH exceeds the balance");
     }
 
     /**
