@@ -42,12 +42,12 @@ pragma experimental ABIEncoderV2;
 // ---------------------------------------------------------------------
 
 import "../OpenZeppelin/utils/ReentrancyGuard.sol";
-import "../Access/MISOAccessControls.sol";
-import "../Utils/SafeTransfer.sol";
+import "../../spec/harness/MISOAccessControls.sol";
+import "../../spec/harness/SafeTransfer.sol";
 import "../Utils/BoringBatchable.sol";
 import "../Utils/BoringMath.sol";
 import "../Utils/BoringERC20.sol";
-import "../Utils/Documents.sol";
+import "../../spec/harness/Documents.sol";
 import "../interfaces/IPointList.sol";
 import "../interfaces/IMisoMarket.sol";
 
@@ -199,7 +199,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Calculates the average price of each token from all commitments.
      * @return Average token price.
      */
-    function tokenPrice() public view returns (uint256) {
+    function tokenPrice() public virtual view returns (uint256) {
         return uint256(marketStatus.commitmentsTotal)
             .mul(1e18).div(uint256(marketInfo.totalTokens));
     }
@@ -208,7 +208,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Returns auction price in any time.
      * @return Fixed start price or minimum price if outside of auction time, otherwise calculated current price.
      */
-    function priceFunction() public view returns (uint256) {
+    function priceFunction() public virtual view returns (uint256) {
         /// @dev Return Auction Price
         if (block.timestamp <= uint256(marketInfo.startTime)) {
             return uint256(marketPrice.startPrice);
@@ -224,7 +224,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice The current clearing price of the Dutch auction.
      * @return The bigger from tokenPrice and priceFunction.
      */
-    function clearingPrice() public view returns (uint256) {
+    function clearingPrice() public virtual view returns (uint256) {
         /// @dev If auction successful, return tokenPrice
         if (tokenPrice() > priceFunction()) {
             return tokenPrice();
@@ -278,8 +278,11 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         }
         /// @notice Return any ETH to be refunded.
         if (ethToRefund > 0) {
-            _beneficiary.transfer(ethToRefund);
+            _safeTokenPayment(paymentCurrency,_beneficiary,ethToRefund);
         }
+
+        /// @notice Revert if commitmentsTotal exceeds the balance
+        require(marketStatus.commitmentsTotal <= address(this).balance, "DutchAuction: The committed ETH exceeds the balance");
     }
 
     /**
@@ -319,7 +322,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Calculates the pricedrop factor.
      * @return Value calculated from auction start and end price difference divided the auction duration.
      */
-    function priceDrop() public view returns (uint256) {
+    function priceDrop() public virtual view returns (uint256) {
         MarketInfo memory _marketInfo = marketInfo;
         MarketPrice memory _marketPrice = marketPrice;
 
@@ -334,7 +337,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @param _user Auction participant address.
      * @return claimerCommitment User commitments reduced by already claimed tokens.
      */
-    function tokensClaimable(address _user) public view returns (uint256 claimerCommitment) {
+    function tokensClaimable(address _user) public virtual view returns (uint256 claimerCommitment) {
         if (commitments[_user] == 0) return 0;
         uint256 unclaimedTokens = IERC20(auctionToken).balanceOf(address(this));
 
@@ -350,7 +353,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Calculates total amount of tokens committed at current auction price.
      * @return Number of tokens commited.
      */
-    function totalTokensCommitted() public view returns (uint256) {
+    function totalTokensCommitted() public virtual view returns (uint256) {
         return uint256(marketStatus.commitmentsTotal).mul(1e18).div(clearingPrice());
     }
 
@@ -359,7 +362,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @param _commitment Commitment user would like to make.
      * @return committed Amount allowed to commit.
      */
-    function calculateCommitment(uint256 _commitment) public view returns (uint256 committed) {
+    function calculateCommitment(uint256 _commitment) public virtual view returns (uint256 committed) {
         uint256 maxCommitment = uint256(marketInfo.totalTokens).mul(clearingPrice()).div(1e18);
         if (uint256(marketStatus.commitmentsTotal).add(_commitment) > maxCommitment) {
             return maxCommitment.sub(uint256(marketStatus.commitmentsTotal));
@@ -371,7 +374,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Checks if the auction is open.
      * @return True if current time is greater than startTime and less than endTime.
      */
-    function isOpen() public view returns (bool) {
+    function isOpen() public virtual view returns (bool) {
         return block.timestamp >= uint256(marketInfo.startTime) && block.timestamp <= uint256(marketInfo.endTime);
     }
 
@@ -379,7 +382,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Successful if tokens sold equals totalTokens.
      * @return True if tokenPrice is bigger or equal clearingPrice.
      */
-    function auctionSuccessful() public view returns (bool) {
+    function auctionSuccessful() public virtual view returns (bool) {
         return tokenPrice() >= clearingPrice();
     }
 
@@ -387,21 +390,21 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Checks if the auction has ended.
      * @return True if auction is successful or time has ended.
      */
-    function auctionEnded() public view returns (bool) {
+    function auctionEnded() public virtual view returns (bool) {
         return auctionSuccessful() || block.timestamp > uint256(marketInfo.endTime);
     }
 
     /**
      * @return Returns true if market has been finalized
      */
-    function finalized() public view returns (bool) {
+    function finalized() public virtual view returns (bool) {
         return marketStatus.finalized;
     }
 
     /**
      * @return Returns true if 7 days have passed since the end of the auction
      */
-    function finalizeTimeExpired() public view returns (bool) {
+    function finalizeTimeExpired() public virtual view returns (bool) {
         return uint256(marketInfo.endTime) + 7 days < block.timestamp;
     }
 
@@ -409,7 +412,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @notice Calculates price during the auction.
      * @return Current auction price.
      */
-    function _currentPrice() private view returns (uint256) {
+    function _currentPrice() internal virtual view returns (uint256) {
         uint256 priceDiff = block.timestamp.sub(uint256(marketInfo.startTime)).mul(priceDrop());
         return uint256(marketPrice.startPrice).sub(priceDiff);
     }
