@@ -52,7 +52,7 @@ jobs:
       - name: Prepare
         run: |
           chmod +x spec/scripts/*.sh
-          ./spec/scripts/applyHarnesses.sh
+          ./spec/scripts/applyHarness.sh
       - name: Verify with Certora - bentobox
         run: |
           spec/scripts/runDutchAuction.sh
