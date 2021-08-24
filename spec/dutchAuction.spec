@@ -342,6 +342,7 @@ rule beneficiaryClaimableTokensShouldDecrease() {
     env e;
     address user;
 
+	require user != currentContract;
     assumeInitState();
 
     require isInitialized() && auctionSuccessful(e) && tokensClaimable(e, user) != 0;
