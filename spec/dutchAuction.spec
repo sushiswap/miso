@@ -84,7 +84,9 @@ rule initState(method f) filtered
 			f.selector == initAuction(address, address, uint256, uint256,
 									  uint256, address, uint256, uint256,
 									  address, address, address).selector)} {
+	env eF;
 	env e;
+	
 	uint64 _startTime;
     uint64 _endTime;
     uint128 _totalTokens;
@@ -92,7 +94,8 @@ rule initState(method f) filtered
     uint128 _minimumPrice;
 
 	calldataarg args;
-	f(e, args);
+	require eF.msg.sender == e.msg.sender && eF.block.timestamp == e.block.timestamp;
+	f(eF, args);
 
 	_startTime, _endTime, _totalTokens = marketInfo(e);
 	_startPrice, _minimumPrice = marketPrice(e);
@@ -103,6 +106,8 @@ rule initState(method f) filtered
 // auction has started.
 rule marketInfoAndPriceModificationPolicy(method f) {
 	env e;
+	env eF;
+
 	uint64 _startTime;
     uint64 _endTime;
     uint128 _totalTokens;
@@ -120,7 +125,8 @@ rule marketInfoAndPriceModificationPolicy(method f) {
 
 	// calling any method except initMarket and initAuction
 	calldataarg args;
-	f(e, args);
+	require eF.msg.sender == e.msg.sender && eF.block.timestamp == e.block.timestamp;
+	f(eF, args);
 	
 	uint64 startTime_;
     uint64 endTime_;
@@ -157,16 +163,23 @@ rule preserveTotalAssetsOnCommit(address user, uint256 amount, method f) {
 	uint256 _userCommitments = commitments(user);
 
 	// limiting f to just test for commitEth and commitTokens operations
-	require f.selector == commitEth(address, bool).selector ||
-	        f.selector == commitTokens(uint256, bool).selector;
+        require f.selector == commitEth(address, bool).selector ||
+		        f.selector == commitTokens(uint256, bool).selector  || 
+			f.selector == batchCommitEth(address,bool,address,bool).selector ;
 
-	// commiting
-	if (f.selector == commitTokens(uint256, bool).selector) {
+	if (f.selector == commitTokens(uint256, bool).selector && !f.isFallback ) {
 		commitTokens(e, amount, true);
-	} else {
+	} else if (f.selector == commitEth(address, bool).selector && !f.isFallback )  {
 		require e.msg.value == amount;
 		commitEth(e, user, true);
+	} else if (f.selector == batchCommitEth(address,bool,address,bool).selector && !f.isFallback ) {
+		require user == receiver;
+		batchCommitEth(e, user, true, user, true);
+	} else {
+		calldataarg args;
+		f(e,args);
 	}
+
 
 	// recording user's external and internal balance after they commit
 	uint256 userPaymentCurrencyBalance_ = tokenBalanceOf(paymentCurrency(), user);
@@ -178,6 +191,8 @@ rule preserveTotalAssetsOnCommit(address user, uint256 amount, method f) {
 // If auction is successful, assets and state is preserved by withdraw operation
 rule auctionSuccessfulWithdraw() {
 	env e;
+	env eF;
+
 
 	require auctionToken() != paymentCurrency();
 	require auctionSuccessful(e) == true;
@@ -189,7 +204,8 @@ rule auctionSuccessfulWithdraw() {
 	uint256 _userClaimed = claimed(e.msg.sender);
 	uint256 claimableTokens = tokensClaimable(e, e.msg.sender);
 
-	withdrawTokens(e);
+	require eF.msg.sender == e.msg.sender && eF.block.timestamp == e.block.timestamp;
+	withdrawTokens(eF);
 
 	// recording assets and state after withdraw
 	uint256 userPaymentCurrencyBalance_ = tokenBalanceOf(paymentCurrency(), e.msg.sender);
@@ -209,6 +225,7 @@ rule auctionSuccessfulWithdraw() {
 // commitments
 rule auctionUnsuccessfulWithdraw() {
 	env e;
+	env eF;
 
 	require auctionSuccessful(e) == false;
 	require e.msg.sender != currentContract;
@@ -216,7 +233,8 @@ rule auctionUnsuccessfulWithdraw() {
 	uint256 _userPaymentCurrencyBalance = tokenBalanceOf(paymentCurrency(), e.msg.sender);
 	uint256 _userCommitments = commitments(e.msg.sender);
 
-	withdrawTokens(e);
+	require eF.msg.sender == e.msg.sender && eF.block.timestamp == e.block.timestamp;
+	withdrawTokens(eF);
 
 	uint256 userPaymentCurrencyBalance_ = tokenBalanceOf(paymentCurrency(), e.msg.sender);
 	uint256 userCommitments_ = commitments(e.msg.sender);
@@ -269,6 +287,7 @@ rule noChangeToOthersAssets(method f, address other, address from) {
 // Once the auction is successful, no more commitments are possible
 rule auctionSuccessfulSteadyState(method f) {
 	env e;
+	env eF;
 
 	assumeInitState();
 
@@ -277,7 +296,8 @@ rule auctionSuccessfulSteadyState(method f) {
 	require (isInitialized() && auctionSuccessful(e) && getCommitmentsTotal() > 0);
 
 	calldataarg args;
-	f(e, args);
+	require eF.msg.sender == e.msg.sender && eF.block.timestamp == e.block.timestamp;
+	f(eF, args);
 
 	uint256 commitmentsAfter = getCommitmentsTotal();
 
@@ -316,6 +336,24 @@ rule noCommitmentsBeforeOpen(method f)
 	// if a user has some commitments, then the curr time has to be greater
 	// than the start time of the auction
 	assert (commitments(user) > 0 => e.block.timestamp >= startTime_);
+}
+
+rule beneficiaryClaimableTokensShouldDecrease() {
+    env e;
+    address user;
+
+	require user != currentContract;
+    assumeInitState();
+
+    require isInitialized() && auctionSuccessful(e) && tokensClaimable(e, user) != 0;
+
+    uint256 _userClaimableTokens = tokensClaimable(e, user);
+
+    withdrawTokens(e, user);
+
+    uint256 userClaimableTokens_ = tokensClaimable(e, user);
+
+    assert(auctionSuccessful(e) && userClaimableTokens_ < _userClaimableTokens);
 }
 
 // Rules that are timing out.
@@ -368,6 +406,7 @@ rule noFrontRunningOnWithdraw(method f)
 	
 {
 	env e;
+	env eW;
 	env eF;
 	calldataarg argsF;
 	uint64 startTime_;
@@ -387,7 +426,8 @@ rule noFrontRunningOnWithdraw(method f)
 	storage initStorage = lastStorage;
 	
 	//first scenario: user can call withdrawTokens
-	withdrawTokens(e);
+	require eW.msg.sender == e.msg.sender && eW.block.timestamp == e.block.timestamp;
+	withdrawTokens(eW);
 
 	//second scenario: someone else calls another function (or same user calls another function beside withdraw) 
 	if (f.selector != withdrawTokens(address).selector) {

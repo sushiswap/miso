@@ -55,4 +55,15 @@ contract DutchAuctionHarness is DutchAuction {
 
     function batch(bytes[] calldata calls, bool revertOnFail) external override payable
             returns (bool[] memory successes, bytes[] memory results) { }
+
+
+    function batchCommitEth(address payable _beneficiary1, bool readAndAgreedToMarketParticipationAgreement1, address payable _beneficiary2, 
+                        bool readAndAgreedToMarketParticipationAgreement2) external payable
+    {
+
+        commitEth( _beneficiary1, readAndAgreedToMarketParticipationAgreement1);
+        commitEth( _beneficiary2, readAndAgreedToMarketParticipationAgreement2);
+                 
+    }
+
 }
