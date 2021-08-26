@@ -1,7 +1,6 @@
 pragma solidity 0.6.12;
 
 import "../utils/EnumerableSet.sol";
-import "../utils/Address.sol";
 import "../utils/Context.sol";
 
 /**
@@ -41,7 +40,6 @@ import "../utils/Context.sol";
  */
 abstract contract AccessControl is Context {
     using EnumerableSet for EnumerableSet.AddressSet;
-    using Address for address;
 
     struct RoleData {
         EnumerableSet.AddressSet members;
