@@ -2,7 +2,6 @@ pragma solidity 0.6.12;
 
 import "../OpenZeppelin/GSN/Context.sol";
 import "../OpenZeppelin/math/SafeMath.sol";
-import "../OpenZeppelin/utils/Address.sol";
 import "../interfaces/IERC20.sol";
 
 /**
@@ -32,7 +31,6 @@ import "../interfaces/IERC20.sol";
 
 contract ERC20 is IERC20, Context {
     using SafeMath for uint256;
-    using Address for address;
     bytes32 public DOMAIN_SEPARATOR;
 
     mapping (address => uint256) private _balances;

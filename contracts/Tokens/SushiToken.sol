@@ -1,6 +1,5 @@
 pragma solidity 0.6.12;
 
-
 import "./ERC20.sol";
 import "../interfaces/IMisoToken.sol";
 import "../OpenZeppelin/access/AccessControl.sol";
@@ -20,7 +19,6 @@ import "../OpenZeppelin/access/AccessControl.sol";
 // ---------------------------------------------------------------------
 
 contract SushiToken is IMisoToken, AccessControl, ERC20 {
-
     /// @notice Miso template id for the token factory.
     /// @dev For different token types, this must be incremented.
     uint256 public constant override tokenTemplate = 3;
@@ -32,7 +30,6 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
         _setupRole(DEFAULT_ADMIN_ROLE, _owner);
         _setupRole(MINTER_ROLE, _owner);
         _mint(msg.sender, _initialSupply);
-
     }
 
     function init(bytes calldata _data) external override payable {}
@@ -48,13 +45,13 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
         initToken(_name,_symbol,_owner,_initialSupply);
     }
 
-   /** 
+    /** 
      * @dev Generates init data for Token Factory
      * @param _name - Token name
      * @param _symbol - Token symbol
      * @param _owner - Contract owner
      * @param _initialSupply Amount of tokens minted on creation
-  */
+     */
     function getInitData(
         string calldata _name,
         string calldata _symbol,
@@ -67,7 +64,6 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
     {
         return abi.encode(_name, _symbol, _owner, _initialSupply);
     }
-
 
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
     function mint(address _to, uint256 _amount) public  {
@@ -106,7 +102,7 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
     /// @notice A record of states for signing / validating signatures
     mapping (address => uint) public sigNonces;
 
-      /// @notice An event thats emitted when an account changes its delegate
+    /// @notice An event thats emitted when an account changes its delegate
     event DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate);
 
     /// @notice An event thats emitted when a delegate account's vote balance changes
@@ -306,5 +302,13 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
         uint256 chainId;
         assembly { chainId := chainid() }
         return chainId;
+    }
+    
+    /**
+     * @inheritdoc ERC20
+     */
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal override { 
+        _moveDelegates(from, _delegates[to], amount);
+        super._beforeTokenTransfer(from, to, amount);
     }
 }
