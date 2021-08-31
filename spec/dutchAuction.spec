@@ -65,7 +65,7 @@ hook Sload uint256 commit commitments[KEY uint a] STORAGE {
 //////////////////////////////////////////////////////////////////////
 //                            Invariants                            //
 //////////////////////////////////////////////////////////////////////
-// commitmentsTotal is always equal to the sum of commitments from all bidders.
+// While the auction is open commitmentsTotal is always equal to the sum of commitments from all bidders.
 invariant commitmentsTotal()
 	sumCommitments() == getCommitmentsTotal()
 	{
@@ -77,6 +77,10 @@ invariant commitmentsTotal()
 			require isOpen(e);
 		}
 	}
+
+//in general cases the sum is less than the total
+invariant sumLessThanTotal()
+	sumCommitments() <= getCommitmentsTotal()
 	
 // Since we assume the following property in other rules we make to sure this is always true
 rule initState(method f) filtered 
@@ -161,7 +165,7 @@ rule preserveTotalAssetsOnCommit(address user, uint256 amount, method f) {
 	// recording user's external and internal balance before they commit
 	uint256 _userPaymentCurrencyBalance = tokenBalanceOf(paymentCurrency(), user);
 	uint256 _userCommitments = commitments(user);
-
+	
 	// limiting f to just test for commitEth and commitTokens operations
         require f.selector == commitEth(address, bool).selector ||
 		        f.selector == commitTokens(uint256, bool).selector  || 
@@ -176,6 +180,7 @@ rule preserveTotalAssetsOnCommit(address user, uint256 amount, method f) {
 		require tokenBalanceOf(paymentCurrency(), currentContract) >= sumCommitments();
 		require isOpen(e) => sumCommitments() == getCommitmentsTotal();
 		require user == receiver;
+		require e.msg.value == amount;
 		batchCommitEth(e, user, true, user, true);
 	} else {
 		calldataarg args;
@@ -204,6 +209,8 @@ rule commitmentsLeqPaymentTokensBalance(bool auctionSuccess, method f) {
 	address paymentToken = paymentCurrency();
 	address auctionCurrency = auctionToken();
 	require auctionCurrency != paymentToken;
+	//safe assumption - proven 
+	require sumCommitments() <= getCommitmentsTotal();
 
 	// finalize reduces the system's balance in case of a successful auction
 	require(f.selector != finalize().selector || !auctionSuccess);
