@@ -172,14 +172,15 @@ rule preserveTotalAssetsOnCommit(address user, uint256 amount, method f) {
 	} else if (f.selector == commitEth(address, bool).selector && !f.isFallback )  {
 		require e.msg.value == amount;
 		commitEth(e, user, true);
-	} else if (f.selector == batchCommitEth(address,bool,address,bool).selector && !f.isFallback ) {
+	} else if (f.selector == batchCommitEth(address,bool,address,bool).selector && !f.isFallback) {
+		require tokenBalanceOf(paymentCurrency(), currentContract) >= sumCommitments();
+		require isOpen(e) => sumCommitments() == getCommitmentsTotal();
 		require user == receiver;
 		batchCommitEth(e, user, true, user, true);
 	} else {
 		calldataarg args;
 		f(e,args);
 	}
-
 
 	// recording user's external and internal balance after they commit
 	uint256 userPaymentCurrencyBalance_ = tokenBalanceOf(paymentCurrency(), user);
@@ -188,11 +189,37 @@ rule preserveTotalAssetsOnCommit(address user, uint256 amount, method f) {
 	assert(_userPaymentCurrencyBalance + _userCommitments == userPaymentCurrencyBalance_ + userCommitments_);
 }
 
+// The payamentToken balance of the systems is at least as the sum of
+// commitments until the auction is successfully finalized
+rule commitmentsLeqPaymentTokensBalance(bool auctionSuccess, method f) {
+	env eF;
+	env e;
+
+	require eF.msg.sender != currentContract; // needed for commitTokens and commitTokensFrom
+	require e.block.timestamp == eF.block.timestamp;
+	require auctionSuccess == auctionSuccessful(e);
+
+	// need to do this for initialization methods since they change the paymentCurrency
+	// and the auctionToken.
+	address paymentToken = paymentCurrency();
+	address auctionCurrency = auctionToken();
+	require auctionCurrency != paymentToken;
+
+	// finalize reduces the system's balance in case of a successful auction
+	require(f.selector != finalize().selector || !auctionSuccess);
+
+	require tokenBalanceOf(paymentToken, currentContract) >= sumCommitments();
+	
+	calldataarg args;
+	f(eF, args);
+	
+	assert tokenBalanceOf(paymentToken, currentContract) >= sumCommitments();
+}
+
 // If auction is successful, assets and state is preserved by withdraw operation
 rule auctionSuccessfulWithdraw() {
 	env e;
 	env eF;
-
 
 	require auctionToken() != paymentCurrency();
 	require auctionSuccessful(e) == true;
