@@ -11,7 +11,7 @@ contract DutchAuctionHarness is DutchAuction {
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     mapping(uint256 => uint256) public currentPrice;
-    mapping(uint256 => uint256 ) public tokenPrice_;
+    mapping(uint256 => uint256) public tokenPrice_;
 
     ////////////////////////////////////////////////////////////
     //                         Getters                        //
