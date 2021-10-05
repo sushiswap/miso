@@ -261,8 +261,8 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
     )
         external payable returns (address token)
     {
-        emit TokenInitialized(address(token), _templateId, _data);
         token = deployToken(_templateId, _integratorFeeAccount);
+        emit TokenInitialized(address(token), _templateId, _data);
         IMisoToken(token).initToken(_data);
         uint256 initialTokens = IERC20(token).balanceOf(address(this));
         if (initialTokens > 0 ) {
