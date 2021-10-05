@@ -413,8 +413,12 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @return Current auction price.
      */
     function _currentPrice() private view returns (uint256) {
-        uint256 priceDiff = block.timestamp.sub(uint256(marketInfo.startTime)).mul(priceDrop());
-        return uint256(marketPrice.startPrice).sub(priceDiff);
+        MarketInfo memory _marketInfo = marketInfo;
+        MarketPrice memory _marketPrice = marketPrice;
+        uint256 priceDiff = block.timestamp.sub(uint256(_marketInfo.startTime)).mul(
+            uint256(_marketPrice.startPrice.sub(_marketPrice.minimumPrice))
+        ) / uint256(_marketInfo.endTime.sub(_marketInfo.startTime));        
+        return uint256(_marketPrice.startPrice).sub(priceDiff);
     }
 
     /**
