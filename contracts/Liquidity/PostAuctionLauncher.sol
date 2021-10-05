@@ -224,7 +224,6 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
         if (!market.finalized()) {
             market.finalize();
         }
-        require(market.finalized());
 
         launcherInfo.launched = true;
         if (!market.auctionSuccessful() ) {
