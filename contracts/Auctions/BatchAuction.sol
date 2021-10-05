@@ -277,6 +277,7 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
                 || hasSmartContractRole(msg.sender) 
                 || finalizeTimeExpired(),  "BatchAuction: Sender must be admin");
         require(!marketStatus.finalized, "BatchAuction: Auction has already finalized");
+        require(marketInfo.totalTokens > 0, "Not initialized");
         require(block.timestamp > marketInfo.endTime, "BatchAuction: Auction has not finished yet");
         if (auctionSuccessful()) {
             /// @dev Successful auction

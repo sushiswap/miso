@@ -472,6 +472,9 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
                 || hasSmartContractRole(msg.sender) 
                 || wallet == msg.sender
                 || finalizeTimeExpired(), "DutchAuction: sender must be an admin");
+        
+        require(marketInfo.totalTokens > 0, "Not initialized");
+
         MarketStatus storage status = marketStatus;
 
         require(!status.finalized, "DutchAuction: auction already finalized");

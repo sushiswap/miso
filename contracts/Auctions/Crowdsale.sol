@@ -383,6 +383,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         MarketStatus storage status = marketStatus;
         require(!status.finalized, "Crowdsale: already finalized");
         MarketInfo storage info = marketInfo;
+        require(info.totalTokens > 0, "Not initialized");
         require(auctionEnded(), "Crowdsale: Has not finished yet"); 
 
         if (auctionSuccessful()) {

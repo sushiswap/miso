@@ -407,6 +407,7 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
                 || finalizeTimeExpired(), "HyperbolicAuction: sender must be an admin");
         MarketStatus storage status = marketStatus;
         MarketInfo storage info = marketInfo;
+        require(info.totalTokens > 0, "Not initialized");
 
         require(!status.finalized, "HyperbolicAuction: auction already finalized");
         if (auctionSuccessful()) {
