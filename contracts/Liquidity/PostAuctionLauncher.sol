@@ -247,6 +247,7 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
         }
 
         address pair = factory.getPair(address(token1), address(token2));
+        require(pair == address(0) || getLPBalance() == 0, "PostLiquidity: Pair not new");
         if(pair == address(0)) {
             createPool();
         }
@@ -353,7 +354,7 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
     /**
      * @notice Creates new SLP pair through SushiSwap.
      */
-    function createPool() public {
+    function createPool() internal {
         factory.createPair(address(token1), address(token2));
     }
 
