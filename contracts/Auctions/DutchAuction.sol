@@ -147,7 +147,6 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
         address _pointList,
         address payable _wallet
     ) public {
-        require(_startTime < 10000000000, "DutchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_endTime < 10000000000, "DutchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "DutchAuction: start time is before current time");
         require(_endTime > _startTime, "DutchAuction: end time must be older than start price");

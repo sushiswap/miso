@@ -134,7 +134,6 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
         address _pointList,
         address payable _wallet
     ) public {
-        require(_startTime < 10000000000, "BatchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_endTime < 10000000000, "BatchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "BatchAuction: start time is before current time");
         require(_endTime > _startTime, "BatchAuction: end time must be older than start time");

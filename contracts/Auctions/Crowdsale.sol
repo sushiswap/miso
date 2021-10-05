@@ -159,7 +159,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         address _pointList,
         address payable _wallet
     ) public {
-        require(_startTime < 10000000000, "Crowdsale: enter an unix timestamp in seconds, not miliseconds");
         require(_endTime < 10000000000, "Crowdsale: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "Crowdsale: start time is before current time");
         require(_endTime > _startTime, "Crowdsale: start time is not before end time");

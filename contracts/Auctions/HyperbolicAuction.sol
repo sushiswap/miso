@@ -150,7 +150,6 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
         address _pointList,
         address payable _wallet
     ) public {
-        require(_startTime < 10000000000, "HyperbolicAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_endTime < 10000000000, "HyperbolicAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "HyperbolicAuction: start time is before current time");
         require(_totalTokens > 0,"HyperbolicAuction: total tokens must be greater than zero");
