@@ -146,7 +146,9 @@ contract MISOFermenter is CloneFactory {
 
         require(escrowTemplates[_templateId]!= address(0));
         newEscrow = createClone(escrowTemplates[_templateId]);
-        isChildEscrow[address(newEscrow)] = Fermenter(true,_templateId,escrows.length-1);
+
+
+        isChildEscrow[address(newEscrow)] = Fermenter(true,_templateId,escrows.length);
         escrows.push(newEscrow);
         emit EscrowCreated(msg.sender,address(newEscrow),escrowTemplates[_templateId]);
     }
