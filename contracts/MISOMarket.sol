@@ -134,7 +134,6 @@ contract MISOMarket is SafeTransfer {
         accessControls = MISOAccessControls(_accessControls);
         bentoBox = IBentoBoxFactory(_bentoBox);
 
-        auctionTemplateId = 0;
         for(uint i = 0; i < _templates.length; i++) {
             _addAuctionTemplate(_templates[i]);
         }
