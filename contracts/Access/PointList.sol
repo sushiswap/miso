@@ -66,16 +66,18 @@ contract PointList is IPointList, MISOAccessControls {
         require(hasAdminRole(msg.sender) || hasOperatorRole(msg.sender), "PointList.setPoints: Sender must be operator");
         require(_accounts.length != 0, "PointList.setPoints: empty array");
         require(_accounts.length == _amounts.length, "PointList.setPoints: incorrect array length");
-        for (uint i = 0; i < _accounts.length; i++) {
+        uint totalPointsCache = totalPoints;
+        for (uint i; i < _accounts.length; i++) {
             address account = _accounts[i];
             uint256 amount = _amounts[i];
             uint256 previousPoints = points[account];
 
             if (amount != previousPoints) {
                 points[account] = amount;
-                totalPoints = totalPoints.sub(previousPoints).add(amount);
+                totalPointsCache = totalPointsCache.sub(previousPoints).add(amount);
                 emit PointsUpdated(account, previousPoints, amount);
             }
         }
+        totalPoints = totalPointsCache;
     }
 }
