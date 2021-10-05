@@ -225,11 +225,12 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @return The bigger from tokenPrice and priceFunction.
      */
     function clearingPrice() public view returns (uint256) {
+
         /// @dev If auction successful, return tokenPrice
-        if (tokenPrice() > priceFunction()) {
-            return tokenPrice();
-        }
-        return priceFunction();
+        uint256 _tokenPrice = tokenPrice();
+        uint256 _currentPrice = priceFunction();
+        return _tokenPrice > _currentPrice ? _tokenPrice : _currentPrice;
+        
     }
 
 
