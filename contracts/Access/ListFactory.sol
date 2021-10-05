@@ -149,8 +149,8 @@ contract ListFactory is CloneFactory, SafeTransfer {
      */
     function deployPointList(
         address _listOwner,
-        address[] memory _accounts,
-        uint256[] memory _amounts
+        address[] calldata _accounts,
+        uint256[] calldata _amounts
     )
         external payable returns (address pointList)
     {
