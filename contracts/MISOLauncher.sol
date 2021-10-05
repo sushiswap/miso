@@ -172,7 +172,7 @@ contract MISOLauncher is SafeTransfer {
      * @param _divaddr Dividend address.
      */
     function setDividends(address payable _divaddr) external {
-        require(accessControls.hasAdminRole(msg.sender), "MISOLauncher.setDev: Sender must be operator");
+        require(accessControls.hasAdminRole(msg.sender), "MISOLauncher: Sender must be operator");
         require(_divaddr != address(0));
         misoDiv = _divaddr;
     }
@@ -197,7 +197,7 @@ contract MISOLauncher is SafeTransfer {
         require(
             accessControls.hasAdminRole(msg.sender) ||
             accessControls.hasOperatorRole(msg.sender),
-            "MISOLauncher: Sender must be admin"
+            "MISOLauncher: Sender must be Operator"
         );
         currentTemplateId[_templateType] = _templateId;
     }
@@ -307,7 +307,7 @@ contract MISOLauncher is SafeTransfer {
             "MISOLauncher: Sender must be operator"
         );
         uint256 templateType = IMisoLiquidity(_template).liquidityTemplate();
-        require(templateType > 0, "MISOLauncher: Incorrect template code ");
+        require(templateType > 0, "MISOLauncher: Incorrect template code");
         launcherTemplateId++;
 
         launcherTemplates[launcherTemplateId] = _template;

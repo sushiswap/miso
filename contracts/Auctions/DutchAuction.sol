@@ -99,7 +99,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
     /// @notice Address that manages auction approvals.
     address public pointList;
 
-    /// @notice The commited amount of accounts.
+    /// @notice The committed amount of accounts.
     mapping(address => uint256) public commitments; 
     /// @notice Amount of tokens to claim per address.
     mapping(address => uint256) public claimed;
@@ -121,12 +121,12 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
     /**
      * @notice Initializes main contract variables and transfers funds for the auction.
      * @dev Init function.
-     * @param _funder The address that funds the token for crowdsale.
+     * @param _funder The address that funds the token for DutchAuction.
      * @param _token Address of the token being sold.
      * @param _totalTokens The total number of tokens to sell in auction.
      * @param _startTime Auction start time.
      * @param _endTime Auction end time.
-     * @param _paymentCurrency The currency the crowdsale accepts for payment. Can be ETH or token address.
+     * @param _paymentCurrency The currency the DutchAuction accepts for payment. Can be ETH or token address.
      * @param _startPrice Starting price of the auction.
      * @param _minimumPrice The minimum auction price.
      * @param _admin Address that can finalize auction.
@@ -245,7 +245,7 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
      * @dev Attribution to the awesome delta.financial contracts
     */  
     function marketParticipationAgreement() public pure returns (string memory) {
-        return "I understand that I'm interacting with a smart contract. I understand that tokens commited are subject to the token issuer and local laws where applicable. I reviewed code of the smart contract and understand it fully. I agree to not hold developers or other people associated with the project liable for any losses or misunderstandings";
+        return "I understand that I'm interacting with a smart contract. I understand that tokens committed are subject to the token issuer and local laws where applicable. I reviewed code of the smart contract and understand it fully. I agree to not hold developers or other people associated with the project liable for any losses or misunderstandings";
     }
     /** 
      * @dev Not using modifiers is a purposeful choice for code readability.
@@ -351,14 +351,14 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
 
     /**
      * @notice Calculates total amount of tokens committed at current auction price.
-     * @return Number of tokens commited.
+     * @return Number of tokens committed.
      */
     function totalTokensCommitted() public view returns (uint256) {
         return uint256(marketStatus.commitmentsTotal).mul(1e18).div(clearingPrice());
     }
 
     /**
-     * @notice Calculates the amout able to be committed during an auction.
+     * @notice Calculates the amount able to be committed during an auction.
      * @param _commitment Commitment user would like to make.
      * @return committed Amount allowed to commit.
      */
@@ -667,12 +667,12 @@ contract DutchAuction is IMisoMarket, MISOAccessControls, BoringBatchable, SafeT
 
     /**
      * @notice Collects data to initialize the auction and encodes them.
-     * @param _funder The address that funds the token for crowdsale.
+     * @param _funder The address that funds the token for DutchAuction.
      * @param _token Address of the token being sold.
      * @param _totalTokens The total number of tokens to sell in auction.
      * @param _startTime Auction start time.
      * @param _endTime Auction end time.
-     * @param _paymentCurrency The currency the crowdsale accepts for payment. Can be ETH or token address.
+     * @param _paymentCurrency The currency the DutchAuction accepts for payment. Can be ETH or token address.
      * @param _startPrice Starting price of the auction.
      * @param _minimumPrice The minimum auction price.
      * @param _admin Address that can finalize auction.

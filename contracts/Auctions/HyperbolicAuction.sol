@@ -124,9 +124,9 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     /**
      * @notice Initializes main contract variables and transfers funds for the auction.
      * @dev Init function
-     * @param _funder The address that funds the token for crowdsale
+     * @param _funder The address that funds the token for HyperbolicAuction
      * @param _token Address of the token being sold
-     * @param _paymentCurrency The currency the crowdsale accepts for payment. Can be ETH or token address
+     * @param _paymentCurrency The currency the HyperbolicAuction accepts for payment. Can be ETH or token address
      * @param _totalTokens The total number of tokens to sell in auction
      * @param _startTime Auction start time
      * @param _endTime Auction end time
@@ -287,7 +287,7 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
         }
 
         /// @notice Revert if commitmentsTotal exceeds the balance
-        require(marketStatus.commitmentsTotal <= address(this).balance, "DutchAuction: The committed ETH exceeds the balance");
+        require(marketStatus.commitmentsTotal <= address(this).balance, "HyperbolicAuction: The committed ETH exceeds the balance");
     }
 
     /**
@@ -326,7 +326,7 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     }
 
     /**
-     * @notice Calculates the amout able to be committed during an auction.
+     * @notice Calculates the amount able to be committed during an auction.
      * @param _commitment Commitment user would like to make.
      * @return Amount allowed to commit.
      */
@@ -633,12 +633,12 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
 
     /**
      * @notice Collects data to initialize the auction and encodes them.
-     * @param _funder The address that funds the token for crowdsale.
+     * @param _funder The address that funds the token for HyperbolicAuction.
      * @param _token Address of the token being sold.
      * @param _totalTokens The total number of tokens to sell in auction.
      * @param _startTime Auction start time.
      * @param _endTime Auction end time.
-     * @param _paymentCurrency The currency the crowdsale accepts for payment. Can be ETH or token address.
+     * @param _paymentCurrency The currency the HyperbolicAuction accepts for payment. Can be ETH or token address.
      * @param _factor Inflection point of the auction.
      * @param _minimumPrice The minimum auction price.
      * @param _wallet Address where collected funds will be forwarded to.
