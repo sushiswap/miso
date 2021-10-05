@@ -45,6 +45,7 @@ import "./Access/MISOAccessControls.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IMisoLiquidity.sol";
 import "./interfaces/IBentoBoxFactory.sol";
+import "./OpenZeppelin/token/ERC20/SafeERC20.sol";
 
 
 contract MISOLauncher is SafeTransfer {
@@ -52,6 +53,7 @@ contract MISOLauncher is SafeTransfer {
     using BoringMath for uint256;
     using BoringMath128 for uint128;
     using BoringMath64 for uint64;
+    using SafeERC20 for IERC20;
 
     /// @notice Responsible for access rights to the contract.
     MISOAccessControls public accessControls;
@@ -279,7 +281,7 @@ contract MISOLauncher is SafeTransfer {
         newLauncher = deployLauncher(_templateId, _integratorFeeAccount);
         if (_tokenSupply > 0) {
             _safeTransferFrom(_token, msg.sender, _tokenSupply);
-            require(IERC20(_token).approve(newLauncher, _tokenSupply), "1");
+            IERC20(_token).safeApprove(newLauncher, _tokenSupply);
         }
         IMisoLiquidity(newLauncher).initLauncher(_data);
 
