@@ -59,8 +59,6 @@ contract PostAuctionLauncher is MISOAccessControls, SafeTransfer, ReentrancyGuar
     using BoringMath16 for uint16;
 
 
-    /// @notice Number of seconds per day.
-    uint256 private constant SECONDS_PER_DAY = 24 * 60 * 60;
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     uint256 private constant LIQUIDITY_PRECISION = 10000;
     

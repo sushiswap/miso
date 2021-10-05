@@ -75,8 +75,6 @@ contract MISOLauncher is SafeTransfer {
     /// @notice Template id to track respective auction template.
     uint256 public launcherTemplateId;
 
-    /// @notice Address for Wrapped Ether.
-    address public WETH;
     IBentoBoxFactory public bentoBox;
 
     /// @notice Mapping from template id to launcher template address.
@@ -126,15 +124,13 @@ contract MISOLauncher is SafeTransfer {
      * @dev Can only be initialized once.
      * @param _accessControls Sets address to get the access controls from.
      */
-    function initMISOLauncher(address _accessControls, address _WETH, address _bentoBox) external {
+    function initMISOLauncher(address _accessControls, address _bentoBox) external {
         require(!initialised);
-        require(_WETH != address(0), "initMISOLauncher: WETH cannot be set to zero");
         require(_accessControls != address(0), "initMISOLauncher: accessControls cannot be set to zero");
         require(_bentoBox != address(0), "initMISOLauncher: bentoBox cannot be set to zero");
 
         accessControls = MISOAccessControls(_accessControls);
         bentoBox = IBentoBoxFactory(_bentoBox); 
-        WETH = _WETH;
         locked = true;
         initialised = true;
 
