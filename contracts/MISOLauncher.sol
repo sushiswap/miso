@@ -88,7 +88,7 @@ contract MISOLauncher is SafeTransfer {
     // /// @notice mapping from template type to template id
     mapping(uint256 => uint256) public currentTemplateId;
 
-    /// @notice Mapping from auction created through this contract to Auction struct.
+    /// @notice Mapping from launcher created through this contract to Launcher struct.
     mapping(address => Launcher) public launcherInfo;
 
     /// @notice Struct to define fees.

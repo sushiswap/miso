@@ -52,6 +52,9 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
     MISOAccessControls public accessControls;
     bytes32 public constant TOKEN_MINTER_ROLE = keccak256("TOKEN_MINTER_ROLE");
 
+    /// @notice Constant to indicate precision
+    uint256 private constant INTEGRATOR_FEE_PRECISION = 1000;
+
     /// @notice Whether token factory has been initialized or not.
     bool private initialised;
 
@@ -62,7 +65,7 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         uint256 index;
     }
 
-    /// @notice Mapping from auction address created through this contract to Auction struct.
+    /// @notice Mapping from token address created through this contract to Token struct.
     mapping(address => Token) public tokenInfo;
 
     /// @notice Array of tokens created using the factory.
@@ -145,7 +148,7 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
         );
         /// @dev this is out of 1000, ie 25% = 250
         require(
-            _amount <= 1000, 
+            _amount <= INTEGRATOR_FEE_PRECISION, 
             "MISOTokenFactory: Range is from 0 to 1000"
         );
         integratorFeePct = _amount;
@@ -188,8 +191,8 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
             accessControls.hasOperatorRole(msg.sender),
             "MISOTokenFactory: Sender must be admin"
         );
-        require(tokenTemplates[_templateId] != address(0), "MISOMarket: incorrect _templateId");
-        require(IMisoToken(tokenTemplates[_templateId]).tokenTemplate() == _templateType, "MISOMarket: incorrect _templateType");
+        require(tokenTemplates[_templateId] != address(0), "MISOTokenFactory: incorrect _templateId");
+        require(IMisoToken(tokenTemplates[_templateId]).tokenTemplate() == _templateType, "MISOTokenFactory: incorrect _templateType");
         currentTemplateId[_templateType] = _templateId;
     }
 
@@ -226,11 +229,11 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
             );
         }
         require(msg.value >= minimumFee, "MISOTokenFactory: Failed to transfer minimumFee");
-        require(tokenTemplates[_templateId] != address(0));
+        require(tokenTemplates[_templateId] != address(0), "MISOTokenFactory: incorrect _templateId");
         uint256 integratorFee = 0;
         uint256 misoFee = msg.value;
         if (_integratorFeeAccount != address(0) && _integratorFeeAccount != misoDiv) {
-            integratorFee = misoFee * integratorFeePct / 1000;
+            integratorFee = misoFee * integratorFeePct / INTEGRATOR_FEE_PRECISION;
             misoFee = misoFee - integratorFee;
         }
         token = createClone(tokenTemplates[_templateId]);
@@ -282,7 +285,7 @@ contract MISOTokenFactory is CloneFactory, SafeTransfer{
             "MISOTokenFactory: Sender must be operator"
         );
         uint256 templateType = IMisoToken(_template).tokenTemplate();
-        require(templateType > 0, "MISOLauncher: Incorrect template code ");
+        require(templateType > 0, "MISOTokenFactory: Incorrect template code ");
         require(tokenTemplateToId[_template] == 0, "MISOTokenFactory: Template exists");
         tokenTemplateId++;
         tokenTemplates[tokenTemplateId] = _template;
