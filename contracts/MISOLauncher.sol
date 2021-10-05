@@ -332,6 +332,10 @@ contract MISOLauncher is SafeTransfer {
         address _template = launcherTemplates[_templateId];
         launcherTemplates[_templateId] = address(0);
         delete launcherTemplateToId[_template];
+        uint256 templateType = IMisoLiquidity(_template).liquidityTemplate();
+        if(currentTemplateId[templateType] == _templateId){
+            delete currentTemplateId[templateType];
+        }
         emit LauncherTemplateRemoved(_template, _templateId);
     }
 
