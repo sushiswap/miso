@@ -65,7 +65,8 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     /// @notice The decimals of the auction token.
-    uint256 private constant AUCTION_TOKEN_DECIMALS = 1e18;
+    uint256 private constant AUCTION_TOKEN_DECIMAL_PLACES = 18;
+    uint256 private constant AUCTION_TOKEN_DECIMALS = 10 ** AUCTION_TOKEN_DECIMAL_PLACES;
 
     /** 
     * @notice rate - How many token units a buyer gets per token or wei.
@@ -166,7 +167,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         require(_admin != address(0), "Crowdsale: admin is the zero address");
         require(_totalTokens > 0, "Crowdsale: total tokens is 0");
         require(_goal > 0, "Crowdsale: goal is 0");
-        require(IERC20(_token).decimals() == 18, "Crowdsale: Token does not have 18 decimals");
+        require(IERC20(_token).decimals() == AUCTION_TOKEN_DECIMAL_PLACES, "Crowdsale: Token does not have 18 decimals");
         if (_paymentCurrency != ETH_ADDRESS) {
             require(IERC20(_paymentCurrency).decimals() > 0, "Crowdsale: Payment currency is not ERC20");
         }
