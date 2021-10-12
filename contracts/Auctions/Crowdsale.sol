@@ -307,7 +307,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     function _addCommitment(address _addr, uint256 _commitment) internal {
         require(block.timestamp >= uint256(marketInfo.startTime) && block.timestamp <= uint256(marketInfo.endTime), "Crowdsale: outside auction hours");
         require(_addr != address(0), "Crowdsale: beneficiary is the zero address");
-
+        require(!marketStatus.finalized, "CrowdSale: Auction is finalized");
         uint256 newCommitment = commitments[_addr].add(_commitment);
         if (marketStatus.usePointList) {
             require(IPointList(pointList).hasPoints(_addr, newCommitment));
