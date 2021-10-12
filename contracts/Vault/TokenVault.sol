@@ -60,6 +60,7 @@ contract TokenVault is SafeTransfer {
     {
         require(_amount > 0, 'token amount is Zero');
         require(_unlockTime < 10000000000, 'Enter an unix timestamp in seconds, not miliseconds');
+        require(_withdrawer != address(0));
         _safeTransferFrom(_tokenAddress, msg.sender, _amount);
 
         _id = ++depositId;

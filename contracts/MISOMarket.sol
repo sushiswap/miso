@@ -45,6 +45,8 @@ import "./Utils/SafeTransfer.sol";
 import "./interfaces/IMisoMarket.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IBentoBoxFactory.sol";
+import "./OpenZeppelin/token/ERC20/SafeERC20.sol";
+
 
 
 contract MISOMarket is SafeTransfer {
@@ -52,6 +54,7 @@ contract MISOMarket is SafeTransfer {
     using BoringMath for uint256;
     using BoringMath128 for uint128;
     using BoringMath64 for uint64;
+    using SafeERC20 for IERC20;
 
     /// @notice Responsible for access rights to the contract.
     MISOAccessControls public accessControls;
@@ -131,7 +134,6 @@ contract MISOMarket is SafeTransfer {
         accessControls = MISOAccessControls(_accessControls);
         bentoBox = IBentoBoxFactory(_bentoBox);
 
-        auctionTemplateId = 0;
         for(uint i = 0; i < _templates.length; i++) {
             _addAuctionTemplate(_templates[i]);
         }
@@ -282,7 +284,7 @@ contract MISOMarket is SafeTransfer {
         newMarket = deployMarket(_templateId, _integratorFeeAccount);
         if (_tokenSupply > 0) {
             _safeTransferFrom(_token, msg.sender, _tokenSupply);
-            require(IERC20(_token).approve(newMarket, _tokenSupply), "1");
+            IERC20(_token).safeApprove(newMarket, _tokenSupply);
         }
         IMisoMarket(newMarket).initMarket(_data);
 

@@ -84,7 +84,7 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
     MarketStatus public marketStatus;
 
     address public auctionToken;
-    /// @notice The currency the crowdsale accepts for payment. Can be ETH or token address.
+    /// @notice The currency the BatchAuction accepts for payment. Can be ETH or token address.
     address public paymentCurrency;
     /// @notice Address that manages auction approvals.
     address public pointList;
@@ -111,12 +111,12 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
     /**
      * @notice Initializes main contract variables and transfers funds for the auction.
      * @dev Init function.
-     * @param _funder The address that funds the token for crowdsale.
+     * @param _funder The address that funds the token for BatchAuction.
      * @param _token Address of the token being sold.
      * @param _totalTokens The total number of tokens to sell in auction.
      * @param _startTime Auction start time.
      * @param _endTime Auction end time.
-     * @param _paymentCurrency The currency the crowdsale accepts for payment. Can be ETH or token address.
+     * @param _paymentCurrency The currency the BatchAuction accepts for payment. Can be ETH or token address.
      * @param _minimumCommitmentAmount Minimum amount collected at which the auction will be successful.
      * @param _admin Address that can finalize auction.
      * @param _wallet Address where collected funds will be forwarded to.
@@ -133,7 +133,6 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
         address _pointList,
         address payable _wallet
     ) public {
-        require(_startTime < 10000000000, "BatchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_endTime < 10000000000, "BatchAuction: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "BatchAuction: start time is before current time");
         require(_endTime > _startTime, "BatchAuction: end time must be older than start time");
@@ -197,7 +196,7 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
         _addCommitment(_beneficiary, msg.value);
 
         /// @notice Revert if commitmentsTotal exceeds the balance
-        require(marketStatus.commitmentsTotal <= address(this).balance, "DutchAuction: The committed ETH exceeds the balance");
+        require(marketStatus.commitmentsTotal <= address(this).balance, "BatchAuction: The committed ETH exceeds the balance");
     }
 
     /**
@@ -209,7 +208,7 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
     }
 
     /**
-     * @notice Checks if amout not 0 and makes the transfer and adds commitment.
+     * @notice Checks if amount not 0 and makes the transfer and adds commitment.
      * @dev Users must approve contract prior to committing tokens to auction.
      * @param _from User ERC20 address.
      * @param _amount Amount of approved ERC20 tokens.
@@ -277,6 +276,7 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
                 || hasSmartContractRole(msg.sender) 
                 || finalizeTimeExpired(),  "BatchAuction: Sender must be admin");
         require(!marketStatus.finalized, "BatchAuction: Auction has already finalized");
+        require(marketInfo.totalTokens > 0, "Not initialized");
         require(block.timestamp > marketInfo.endTime, "BatchAuction: Auction has not finished yet");
         if (auctionSuccessful()) {
             /// @dev Successful auction
@@ -299,8 +299,8 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
     {
         require(hasAdminRole(msg.sender));
         MarketStatus storage status = marketStatus;
-        require(!status.finalized, "Crowdsale: already finalized");
-        require( uint256(status.commitmentsTotal) == 0, "Crowdsale: Funds already raised" );
+        require(!status.finalized, "BatchAuction: already finalized");
+        require( uint256(status.commitmentsTotal) == 0, "BatchAuction: Funds already raised" );
 
         _safeTokenPayment(auctionToken, wallet, uint256(marketInfo.totalTokens));
 

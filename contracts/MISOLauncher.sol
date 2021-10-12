@@ -45,6 +45,7 @@ import "./Access/MISOAccessControls.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IMisoLiquidity.sol";
 import "./interfaces/IBentoBoxFactory.sol";
+import "./OpenZeppelin/token/ERC20/SafeERC20.sol";
 
 
 contract MISOLauncher is SafeTransfer {
@@ -52,6 +53,7 @@ contract MISOLauncher is SafeTransfer {
     using BoringMath for uint256;
     using BoringMath128 for uint128;
     using BoringMath64 for uint64;
+    using SafeERC20 for IERC20;
 
     /// @notice Responsible for access rights to the contract.
     MISOAccessControls public accessControls;
@@ -73,8 +75,6 @@ contract MISOLauncher is SafeTransfer {
     /// @notice Template id to track respective auction template.
     uint256 public launcherTemplateId;
 
-    /// @notice Address for Wrapped Ether.
-    address public WETH;
     IBentoBoxFactory public bentoBox;
 
     /// @notice Mapping from template id to launcher template address.
@@ -86,7 +86,7 @@ contract MISOLauncher is SafeTransfer {
     // /// @notice mapping from template type to template id
     mapping(uint256 => uint256) public currentTemplateId;
 
-    /// @notice Mapping from auction created through this contract to Auction struct.
+    /// @notice Mapping from launcher created through this contract to Launcher struct.
     mapping(address => Launcher) public launcherInfo;
 
     /// @notice Struct to define fees.
@@ -124,15 +124,13 @@ contract MISOLauncher is SafeTransfer {
      * @dev Can only be initialized once.
      * @param _accessControls Sets address to get the access controls from.
      */
-    function initMISOLauncher(address _accessControls, address _WETH, address _bentoBox) external {
+    function initMISOLauncher(address _accessControls, address _bentoBox) external {
         require(!initialised);
-        require(_WETH != address(0), "initMISOLauncher: WETH cannot be set to zero");
         require(_accessControls != address(0), "initMISOLauncher: accessControls cannot be set to zero");
         require(_bentoBox != address(0), "initMISOLauncher: bentoBox cannot be set to zero");
 
         accessControls = MISOAccessControls(_accessControls);
         bentoBox = IBentoBoxFactory(_bentoBox); 
-        WETH = _WETH;
         locked = true;
         initialised = true;
 
@@ -170,7 +168,7 @@ contract MISOLauncher is SafeTransfer {
      * @param _divaddr Dividend address.
      */
     function setDividends(address payable _divaddr) external {
-        require(accessControls.hasAdminRole(msg.sender), "MISOLauncher.setDev: Sender must be operator");
+        require(accessControls.hasAdminRole(msg.sender), "MISOLauncher: Sender must be operator");
         require(_divaddr != address(0));
         misoDiv = _divaddr;
     }
@@ -195,7 +193,7 @@ contract MISOLauncher is SafeTransfer {
         require(
             accessControls.hasAdminRole(msg.sender) ||
             accessControls.hasOperatorRole(msg.sender),
-            "MISOLauncher: Sender must be admin"
+            "MISOLauncher: Sender must be Operator"
         );
         currentTemplateId[_templateType] = _templateId;
     }
@@ -279,7 +277,7 @@ contract MISOLauncher is SafeTransfer {
         newLauncher = deployLauncher(_templateId, _integratorFeeAccount);
         if (_tokenSupply > 0) {
             _safeTransferFrom(_token, msg.sender, _tokenSupply);
-            require(IERC20(_token).approve(newLauncher, _tokenSupply), "1");
+            IERC20(_token).safeApprove(newLauncher, _tokenSupply);
         }
         IMisoLiquidity(newLauncher).initLauncher(_data);
 
@@ -305,7 +303,7 @@ contract MISOLauncher is SafeTransfer {
             "MISOLauncher: Sender must be operator"
         );
         uint256 templateType = IMisoLiquidity(_template).liquidityTemplate();
-        require(templateType > 0, "MISOLauncher: Incorrect template code ");
+        require(templateType > 0, "MISOLauncher: Incorrect template code");
         launcherTemplateId++;
 
         launcherTemplates[launcherTemplateId] = _template;
@@ -330,6 +328,10 @@ contract MISOLauncher is SafeTransfer {
         address _template = launcherTemplates[_templateId];
         launcherTemplates[_templateId] = address(0);
         delete launcherTemplateToId[_template];
+        uint256 templateType = IMisoLiquidity(_template).liquidityTemplate();
+        if(currentTemplateId[templateType] == _templateId){
+            delete currentTemplateId[templateType];
+        }
         emit LauncherTemplateRemoved(_template, _templateId);
     }
 

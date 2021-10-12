@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.6.12;
 
 /**
@@ -61,20 +62,22 @@ contract PointList is IPointList, MISOAccessControls {
      * @param _accounts An array of accounts.
      * @param _amounts An array of corresponding amounts.
      */
-    function setPoints(address[] memory _accounts, uint256[] memory _amounts) external override {
+    function setPoints(address[] calldata _accounts, uint256[] calldata _amounts) external override {
         require(hasAdminRole(msg.sender) || hasOperatorRole(msg.sender), "PointList.setPoints: Sender must be operator");
         require(_accounts.length != 0, "PointList.setPoints: empty array");
         require(_accounts.length == _amounts.length, "PointList.setPoints: incorrect array length");
-        for (uint i = 0; i < _accounts.length; i++) {
+        uint totalPointsCache = totalPoints;
+        for (uint i; i < _accounts.length; i++) {
             address account = _accounts[i];
             uint256 amount = _amounts[i];
             uint256 previousPoints = points[account];
 
             if (amount != previousPoints) {
                 points[account] = amount;
-                totalPoints = totalPoints.sub(previousPoints).add(amount);
+                totalPointsCache = totalPointsCache.sub(previousPoints).add(amount);
                 emit PointsUpdated(account, previousPoints, amount);
             }
         }
+        totalPoints = totalPointsCache;
     }
 }

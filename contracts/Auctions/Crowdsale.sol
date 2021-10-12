@@ -65,7 +65,8 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     /// @notice The decimals of the auction token.
-    uint256 private constant AUCTION_TOKEN_DECIMALS = 1e18;
+    uint256 private constant AUCTION_TOKEN_DECIMAL_PLACES = 18;
+    uint256 private constant AUCTION_TOKEN_DECIMALS = 10 ** AUCTION_TOKEN_DECIMAL_PLACES;
 
     /** 
     * @notice rate - How many token units a buyer gets per token or wei.
@@ -157,7 +158,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         address _pointList,
         address payable _wallet
     ) public {
-        require(_startTime < 10000000000, "Crowdsale: enter an unix timestamp in seconds, not miliseconds");
         require(_endTime < 10000000000, "Crowdsale: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "Crowdsale: start time is before current time");
         require(_endTime > _startTime, "Crowdsale: start time is not before end time");
@@ -166,7 +166,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         require(_admin != address(0), "Crowdsale: admin is the zero address");
         require(_totalTokens > 0, "Crowdsale: total tokens is 0");
         require(_goal > 0, "Crowdsale: goal is 0");
-        require(IERC20(_token).decimals() == 18, "Crowdsale: Token does not have 18 decimals");
+        require(IERC20(_token).decimals() == AUCTION_TOKEN_DECIMAL_PLACES, "Crowdsale: Token does not have 18 decimals");
         if (_paymentCurrency != ETH_ADDRESS) {
             require(IERC20(_paymentCurrency).decimals() > 0, "Crowdsale: Payment currency is not ERC20");
         }
@@ -246,7 +246,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         }
 
         /// @notice Revert if commitmentsTotal exceeds the balance
-        require(marketStatus.commitmentsTotal <= address(this).balance, "DutchAuction: The committed ETH exceeds the balance");
+        require(marketStatus.commitmentsTotal <= address(this).balance, "CrowdSale: The committed ETH exceeds the balance");
     }
 
     /**
@@ -382,6 +382,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         MarketStatus storage status = marketStatus;
         require(!status.finalized, "Crowdsale: already finalized");
         MarketInfo storage info = marketInfo;
+        require(info.totalTokens > 0, "Not initialized");
         require(auctionEnded(), "Crowdsale: Has not finished yet"); 
 
         if (auctionSuccessful()) {
