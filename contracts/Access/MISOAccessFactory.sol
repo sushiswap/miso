@@ -97,7 +97,7 @@ contract MISOAccessFactory is CloneFactory {
             "MISOAccessFactory.updateAccessTemplate: Sender must be admin"
         );
         require(_template != address(0));
-        emit AccessControlTemplateAdded(_template, accessControlTemplate);
+        emit AccessControlTemplateAdded(accessControlTemplate, _template);
         accessControlTemplate = _template;
     }
 
