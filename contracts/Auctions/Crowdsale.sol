@@ -69,14 +69,11 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     uint256 private constant AUCTION_TOKEN_DECIMALS = 10 ** AUCTION_TOKEN_DECIMAL_PLACES;
 
     /** 
-    * @notice rate - How many token units a buyer gets per token or wei.
-    * The rate is the conversion between wei and the smallest and indivisible token unit.
-    * So, if you are using a rate of 1 with a ERC20Detailed token with 3 decimals called TOK
-    * 1 wei will give you 1 unit, or 0.001 TOK.
+    * @notice price - The price of the token in terms of Wei.
     */
     /// @notice goal - Minimum amount of funds to be raised in weis or tokens.
     struct MarketPrice {
-        uint128 rate;
+        uint128 price;
         uint128 goal; 
     }
     MarketPrice public marketPrice;
@@ -118,7 +115,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     /// @notice Event for updating auction times.  Needs to be before auction starts.
     event AuctionTimeUpdated(uint256 startTime, uint256 endTime); 
     /// @notice Event for updating auction prices. Needs to be before auction starts.
-    event AuctionPriceUpdated(uint256 rate, uint256 goal); 
+    event AuctionPriceUpdated(uint256 price, uint256 goal); 
     /// @notice Event for updating auction wallet. Needs to be before auction starts.
     event AuctionWalletUpdated(address wallet); 
 
@@ -139,7 +136,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      * @param _totalTokens The total number of tokens to sell in crowdsale.
      * @param _startTime Crowdsale start time.
      * @param _endTime Crowdsale end time.
-     * @param _rate Number of token units a buyer gets per wei or token.
+     * @param _price Price of tokens.
      * @param _goal Minimum amount of funds to be raised in weis or tokens.
      * @param _admin Address that can finalize auction.
      * @param _pointList Address that will manage auction approvals.
@@ -152,7 +149,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         uint256 _totalTokens,
         uint256 _startTime,
         uint256 _endTime,
-        uint256 _rate,
+        uint256 _price,
         uint256 _goal,
         address _admin,
         address _pointList,
@@ -161,7 +158,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         require(_endTime < 10000000000, "Crowdsale: enter an unix timestamp in seconds, not miliseconds");
         require(_startTime >= block.timestamp, "Crowdsale: start time is before current time");
         require(_endTime > _startTime, "Crowdsale: start time is not before end time");
-        require(_rate > 0, "Crowdsale: rate is 0");
+        require(_price > 0, "Crowdsale: price is 0");
         require(_wallet != address(0), "Crowdsale: wallet is the zero address");
         require(_admin != address(0), "Crowdsale: admin is the zero address");
         require(_totalTokens > 0, "Crowdsale: total tokens is 0");
@@ -171,7 +168,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             require(IERC20(_paymentCurrency).decimals() > 0, "Crowdsale: Payment currency is not ERC20");
         }
 
-        marketPrice.rate = BoringMath.to128(_rate);
+        marketPrice.price = BoringMath.to128(_price);
         marketPrice.goal = BoringMath.to128(_goal);
 
         marketInfo.startTime = BoringMath.to64(_startTime);
@@ -424,11 +421,11 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     }
 
     function tokenPrice() public view returns (uint256) {
-        return uint256(marketPrice.rate); 
+        return uint256(marketPrice.price); 
     }
 
     function _getTokenPrice(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(uint256(marketPrice.rate)).div(AUCTION_TOKEN_DECIMALS);   
+        return _amount.mul(uint256(marketPrice.price)).div(AUCTION_TOKEN_DECIMALS);   
     }
 
     function getTokenAmount(uint256 _amount) public view returns (uint256) {
@@ -442,7 +439,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      * @return tokenAmount Number of tokens that can be purchased with the specified amount.
      */
     function _getTokenAmount(uint256 _amount) internal view returns (uint256) {
-        return _amount.mul(AUCTION_TOKEN_DECIMALS).div(uint256(marketPrice.rate));
+        return _amount.mul(AUCTION_TOKEN_DECIMALS).div(uint256(marketPrice.price));
     }
 
     /**
@@ -556,19 +553,19 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
     /**
      * @notice Admin can set auction price through this function.
-     * @param _rate Price per token.
+     * @param _price Price per token.
      * @param _goal Minimum amount raised and goal for the auction.
      */
-    function setAuctionPrice(uint256 _rate, uint256 _goal) external {
+    function setAuctionPrice(uint256 _price, uint256 _goal) external {
         require(hasAdminRole(msg.sender));
         require(_goal > 0, "Crowdsale: goal is 0");
-        require(_rate > 0, "Crowdsale: rate is 0");
+        require(_price > 0, "Crowdsale: price is 0");
         require(marketStatus.commitmentsTotal == 0, "Crowdsale: auction cannot have already started");
-        marketPrice.rate = BoringMath.to128(_rate);
+        marketPrice.price = BoringMath.to128(_price);
         marketPrice.goal = BoringMath.to128(_goal);
         require(_getTokenAmount(_goal) <= uint256(marketInfo.totalTokens), "Crowdsale: minimum target exceeds hard cap");
 
-        emit AuctionPriceUpdated(_rate,_goal);
+        emit AuctionPriceUpdated(_price,_goal);
     }
 
     /**
@@ -604,7 +601,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         uint256 _totalTokens,
         uint256 _startTime,
         uint256 _endTime,
-        uint256 _rate,
+        uint256 _price,
         uint256 _goal,
         address _admin,
         address _pointList,
@@ -624,7 +621,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             )
         );
     
-        initCrowdsale(_funder, _token, _paymentCurrency, _totalTokens, _startTime, _endTime, _rate, _goal, _admin, _pointList, _wallet);
+        initCrowdsale(_funder, _token, _paymentCurrency, _totalTokens, _startTime, _endTime, _price, _goal, _admin, _pointList, _wallet);
     }
 
     /**
@@ -635,7 +632,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      * @param _totalTokens The total number of tokens to sell in crowdsale.
      * @param _startTime Crowdsale start time.
      * @param _endTime Crowdsale end time.
-     * @param _rate Number of token units a buyer gets per wei or token.
+     * @param _price Price of the token in Wei.
      * @param _goal Minimum amount of funds to be raised in weis or tokens.
      * @param _admin Address that can finalize crowdsale.
      * @param _pointList Address that will manage auction approvals.
@@ -649,7 +646,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         uint256 _totalTokens,
         uint256 _startTime,
         uint256 _endTime,
-        uint256 _rate,
+        uint256 _price,
         uint256 _goal,
         address _admin,
         address _pointList,
@@ -664,7 +661,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             _totalTokens,
             _startTime,
             _endTime,
-            _rate,
+            _price,
             _goal,
             _admin,
             _pointList,
