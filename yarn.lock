@@ -932,10 +932,10 @@
   resolved "https://registry.yarnpkg.com/@sushiswap/bentobox/-/bentobox-0.3.0.tgz#c7f669d5f26417e7e705dfa2a1ac09676f294148"
   integrity sha512-L2mUpGNaQYOLoFADDBHf2tQizt73E9Qm+cGBGFAbRVXfYPYSG8ZhyORcJrkLHkP87oSEkAUjh8znvd61KN66zQ==
 
-"@sushiswap/core-sdk@1.0.0-canary.6":
-  version "1.0.0-canary.6"
-  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.6.tgz#b60812918cee78ca8b26efd25ca5d1ec8afd1f77"
-  integrity sha512-fikbZZczbbAyYR/78MHsujVinGh3rDUi/4jZdYhDvwn9kiKJX668fnSQ2NirM28LuJgGativgw2qsKsRCfNtqQ==
+"@sushiswap/core-sdk@1.0.0-canary.7":
+  version "1.0.0-canary.7"
+  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.7.tgz#d73d31587fc3122db901aade0373c7e9204e3cd3"
+  integrity sha512-cc04aNv1PU6A899OMumRjO4/VGiL4dHKAEL7aTzVRUL/y1DY3ZKoZTZy6gozgHrLg6YT+ZxwUMjy5iiObRPq+Q==
   dependencies:
     "@ethersproject/address" "^5.4.0"
     "@ethersproject/bignumber" "^5.4.0"
