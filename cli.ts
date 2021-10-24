@@ -24,9 +24,188 @@ task(
     const tokenFactory = await ethers.getContract("MISOTokenFactory");
     const pointList = await ethers.getContract("PointList");
     const postAuctionLauncher = await ethers.getContract("PostAuctionLauncher");
-    const sushiToken = await ethers.getContract("SushiToken"); 
+    const sushiToken = await ethers.getContract("SushiToken");
 
-    const contracts = [
+    // TODO: Simplify this...
+    try {
+      await run("verify:verify", {
+        address: batchAuction.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: crowdsale.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: dutchAuction.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: fixedToken.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: hyperbolicAuction.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: listFactory.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: mintableToken.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: accessControls.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: farmFactory.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: helper.address,
+        constructorArguments: [
+          accessControls.address,
+          tokenFactory.address,
+          market.address,
+          launcher.address,
+          farmFactory.address,
+        ],
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: launcher.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: market.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: masterChef.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: tokenFactory.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: pointList.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: postAuctionLauncher.address,
+        constructorArguments: [WNATIVE_ADDRESS[chainId]],
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    try {
+      await run("verify:verify", {
+        address: sushiToken.address,
+      });
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message);
+      }
+    }
+
+    await tenderly.verify([
       {
         name: "BatchAuction",
         address: batchAuction.address,
@@ -66,13 +245,6 @@ task(
       {
         name: "MISOHelper",
         address: helper.address,
-        constructorArguments: [
-          accessControls.address,
-          tokenFactory.address,
-          market.address,
-          launcher.address,
-          farmFactory.address,
-        ],
       },
       {
         name: "MISOLauncher",
@@ -97,28 +269,12 @@ task(
       {
         name: "PostAuctionLauncher",
         address: postAuctionLauncher.address,
-        constructorArguments: [WNATIVE_ADDRESS[chainId]],
       },
       {
         name: "SushiToken",
         address: sushiToken.address,
       },
-    ]
-
-    contracts.forEach(async ({ address, constructorArguments }) => {
-      try {
-        await run("verify:verify", {
-          address,
-          constructorArguments
-        });
-      } catch (error) {
-        if (error instanceof NomicLabsHardhatPluginError) {
-          console.debug(error.message);
-        }
-      }
-    })
-
-    await tenderly.verify(contracts);
+    ]);
   }
 );
 
