@@ -453,11 +453,15 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         return block.timestamp >= uint256(marketInfo.startTime) && block.timestamp <= uint256(marketInfo.endTime);
     }
 
+    function auctionSuccessful() public view returns (bool) {
+        return _auctionSuccessful();
+    }
+
     /**
      * @notice Checks if the sale minimum amount was raised.
      * @return auctionSuccessful True if the commitmentsTotal is equal or higher than goal.
      */
-    function auctionSuccessful() public view returns (bool) {
+    function _auctionSuccessful() internal view returns (bool) {
         return uint256(marketStatus.commitmentsTotal) >= uint256(marketPrice.goal);
     }
 
@@ -467,7 +471,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
      */
     function auctionEnded() public view returns (bool) {
         return block.timestamp > uint256(marketInfo.endTime) || 
-        _getTokenAmount(uint256(marketStatus.commitmentsTotal) + 1) >= uint256(marketInfo.totalTokens);
+        _auctionSuccessful();
     }
 
     /**
