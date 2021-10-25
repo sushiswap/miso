@@ -383,7 +383,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         require(!status.finalized, "Crowdsale: already finalized");
         MarketInfo storage info = marketInfo;
         require(info.totalTokens > 0, "Not initialized");
-        require(auctionEnded(), "Crowdsale: Has not finished yet"); 
+        require(auctionFinalizable(), "Crowdsale: not finilizable"); 
 
         if (auctionSuccessful()) {
             /// @dev Successful auction
@@ -453,6 +453,10 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         return block.timestamp >= uint256(marketInfo.startTime) && block.timestamp <= uint256(marketInfo.endTime);
     }
 
+    function auctionFinalizable() public view returns (bool) {
+        return _auctionSuccessful() || _auctionEnded();
+    }
+
     function auctionSuccessful() public view returns (bool) {
         return _auctionSuccessful();
     }
@@ -465,13 +469,16 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         return uint256(marketStatus.commitmentsTotal) >= uint256(marketPrice.goal);
     }
 
+    function auctionEnded() public view returns (bool) {
+        return _auctionEnded();
+    }
+
     /**
      * @notice Checks if the sale has ended.
-     * @return auctionEnded True if sold out or time has ended.
+     * @return auctionEnded true if time has ended.
      */
-    function auctionEnded() public view returns (bool) {
-        return block.timestamp > uint256(marketInfo.endTime) || 
-        _auctionSuccessful();
+    function _auctionEnded() internal view returns (bool) {
+        return block.timestamp > uint256(marketInfo.endTime);
     }
 
     /**
