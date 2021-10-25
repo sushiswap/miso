@@ -14,8 +14,16 @@ hh --network <network> deploy --tags Crowdsale
 
 ## Verification
 
-Etherscan Verification happens automatically on deployment given that the ETHERSCAN_API_KEY is set in your .env, Tenderly Verification will also so long as you've logged in with the tenderly-cli.
+Verification task will verify all contracts on Etherscan & Tenderly (if supported), given that given that the ETHERSCAN_API_KEY is set in your .env, and you're logged in via the tenderly-cli.
 
+```sh
 hh --network ropsten miso:verify
+```
 
+Verification for sourcify compatible explorers can be achieved also (example below).
+
+```sh
 hh --network celo sourcify --endpoint https://sourcify.dev/server/
+```
+
+
