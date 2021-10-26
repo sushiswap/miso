@@ -27,3 +27,13 @@ hh --network celo sourcify --endpoint https://sourcify.dev/server/
 ```
 
 
+## Whitelist Process
+
+addMinter on MISOAccessControls will allow a project to mint a token and create an auction.
+
+## Max List Process
+
+- MaxList contract deployed
+- initPointList called with admin parameter
+- setPoints called with account parameter set to empty array, and amounts set to array with a single amount (amount should be MAX_NUMBER_OF_TOKENS * TOKEN_DECIMALS * PRICE_PER_TOKEN)
+
