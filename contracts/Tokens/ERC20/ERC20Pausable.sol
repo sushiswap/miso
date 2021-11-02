@@ -1,28 +1,32 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 
+pragma solidity >=0.8.0;
 
-pragma solidity ^0.6.0;
+import "../../Utils/Ownable.sol";
 
-import "../ERC20.sol";
-import "../../OpenZeppelin/utils/Pausable.sol";
-
-/**
- * @dev ERC20 token with pausable token transfers, minting and burning.
- *
- * Useful for scenarios such as preventing trades until the end of an evaluation
- * period, or having an emergency switch for freezing all token transfers in the
- * event of a large bug.
- */
-abstract contract ERC20Pausable is ERC20, Pausable {
-    /**
-     * @dev See {ERC20-_beforeTokenTransfer}.
-     *
-     * Requirements:
-     *
-     * - the contract must not be paused.
-     */
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
-        super._beforeTokenTransfer(from, to, amount);
-
-        require(!paused(), "ERC20Pausable: token transfer while paused");
+/// @notice Pausable extension for ERC20.
+abstract contract ERC20Pausable is Ownable {
+    event TogglePause(bool indexed paused);
+    
+    bool public paused;
+    
+    /// @notice Initialize pausing module.
+    /// @param _paused If 'true', modified functions are paused.
+    constructor(bool _paused) {
+        paused = _paused;
+        emit TogglePause(_paused);
+    }
+    
+    /// @notice Function pausing modifier that conditions functions to be called when `paused` is not enabled.
+    modifier notPaused() {
+        require(!paused, "PAUSED");
+        _;
+    }
+    
+    /// @notice Toggle `paused` conditions on/off.
+    /// @param _paused If 'true', modified functions are paused.
+    function togglePause(bool _paused) external onlyOwner {
+        paused = _paused;
+        emit TogglePause(_paused);
     }
 }
