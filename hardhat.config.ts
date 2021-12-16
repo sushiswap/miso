@@ -46,7 +46,7 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    mainnet: {
+    ethereum: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
       accounts,
       chainId: 1,
