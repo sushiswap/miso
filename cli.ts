@@ -25,7 +25,6 @@ task(
     const pointList = await ethers.getContract("PointList");
     const postAuctionLauncher = await ethers.getContract("PostAuctionLauncher");
     const sushiToken = await ethers.getContract("SushiToken");
-    const maxList = await ethers.getContract("MaxList");
 
     const contracts = [
       {
@@ -104,17 +103,13 @@ task(
         name: "SushiToken",
         address: sushiToken.address,
       },
-      {
-        name: "MaxList",
-        address: maxList.address,
-      },
-    ];
+    ]
 
-    for (const contract of contracts) {
+    for (const { address, constructorArguments } of contracts) {
       try {
         await run("verify:verify", {
-          address: contract.address,
-          constructorArguments: contract?.constructorArguments || [],
+          address,
+          constructorArguments
         });
       } catch (error) {
         if (error instanceof NomicLabsHardhatPluginError) {
