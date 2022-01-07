@@ -40,4 +40,4 @@ deployFunction.dependencies = [
   "MISOMarket",
 ];
 
-deployFunction.tags = ["                               "];
+deployFunction.tags = ["MISOReceipe"];
