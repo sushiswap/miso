@@ -86,7 +86,7 @@ contract MISOReceipe {
             token = misoTokenFactory.createToken(
                 _misoTokenFactoryTemplateId,
                 address(0),
-                abi.encodePacked(_name, _symbol, msg.sender, _initialSupply)
+                abi.encode(_name, _symbol, msg.sender, _initialSupply)
             );
             totalSupply = _initialSupply;
         }
@@ -111,7 +111,7 @@ contract MISOReceipe {
                 token,
                 totalSupply,
                 address(0),
-                abi.encodePacked(
+                abi.encode(
                     msg.sender,
                     token,
                     mData,
@@ -134,7 +134,7 @@ contract MISOReceipe {
                 token,
                 totalSupply,
                 address(0),
-                abi.encodePacked(
+                abi.encode(
                     newMarket,
                     factory,
                     msg.sender,
