@@ -1,4 +1,4 @@
-import { WNATIVE_ADDRESS } from "@sushiswap/core-sdk";
+import { FACTORY_ADDRESS, WNATIVE_ADDRESS } from "@sushiswap/core-sdk";
 import { task } from "hardhat/config";
 import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 
@@ -25,6 +25,7 @@ task(
     const pointList = await ethers.getContract("PointList");
     const postAuctionLauncher = await ethers.getContract("PostAuctionLauncher");
     const sushiToken = await ethers.getContract("SushiToken");
+    const receipe = await ethers.getContract("MISOReceipe");
 
     const contracts = [
       {
@@ -103,13 +104,24 @@ task(
         name: "SushiToken",
         address: sushiToken.address,
       },
-    ]
+      {
+        name: "MISOReceipe",
+        address: receipe.address,
+        constructorArguments: [
+          tokenFactory.address,
+          listFactory.address,
+          launcher.address,
+          market.address,
+          FACTORY_ADDRESS[chainId],
+        ],
+      },
+    ];
 
     for (const { address, constructorArguments } of contracts) {
       try {
         await run("verify:verify", {
           address,
-          constructorArguments
+          constructorArguments,
         });
       } catch (error) {
         if (error instanceof NomicLabsHardhatPluginError) {

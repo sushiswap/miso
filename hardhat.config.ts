@@ -5,7 +5,7 @@ import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-solhint";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
-// import "hardhat-deploy-ethers";
+import "hardhat-deploy-ethers";
 import "hardhat-gas-reporter";
 import "hardhat-spdx-license-identifier";
 import "hardhat-watcher";
