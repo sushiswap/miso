@@ -3,7 +3,7 @@ import { task } from "hardhat/config";
 import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 
 task(
-  "miso:verify",
+  "verify:all",
   "Verify contracts",
   async (_, { ethers, tenderly, run, getChainId }) => {
     const chainId = parseInt(await getChainId());
@@ -25,7 +25,7 @@ task(
     const pointList = await ethers.getContract("PointList");
     const postAuctionLauncher = await ethers.getContract("PostAuctionLauncher");
     const sushiToken = await ethers.getContract("SushiToken");
-    const receipe = await ethers.getContract("MISOReceipe");
+    const auctionCreation = await ethers.getContract("AuctionCreation");
 
     const contracts = [
       {
@@ -105,8 +105,8 @@ task(
         address: sushiToken.address,
       },
       {
-        name: "MISOReceipe",
-        address: receipe.address,
+        name: "AuctionCreation",
+        address: auctionCreation.address,
         constructorArguments: [
           tokenFactory.address,
           listFactory.address,
