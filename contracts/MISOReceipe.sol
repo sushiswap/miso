@@ -117,6 +117,7 @@ contract MISOReceipe is SafeTransfer{
                 abi.encode(
                     msg.sender,
                     token,
+                    totalSupply,
                     mData,
                     msg.sender,
                     pointList,
