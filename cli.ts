@@ -4,7 +4,7 @@ import { NomicLabsHardhatPluginError } from "hardhat/plugins";
 
 task(
   "verify:all",
-  "Verify contracts",
+  "Verify all contracts",
   async (_, { ethers, tenderly, run, getChainId }) => {
     const chainId = parseInt(await getChainId());
 
