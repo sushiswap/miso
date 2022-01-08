@@ -12,7 +12,7 @@ import "hardhat-watcher";
 import "solidity-coverage";
 import "@tenderly/hardhat-tenderly";
 
-import { HardhatUserConfig, task } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config";
 
 import { removeConsoleLog } from "hardhat-preprocessor";
 
@@ -29,6 +29,15 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  // external: {
+  //   contracts: [
+  //     {
+  //       artifacts: "node_modules/@sushiswap/contracts/artifacts",
+  //       // Cannot use import statement outside a module?
+  //       deploy: "node_modules/@sushiswap/contracts/deploy",
+  //     },
+  //   ],
+  // },
   gasReporter: {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
     currency: "USD",
