@@ -3,6 +3,7 @@
 pragma solidity 0.6.12;
 
 import "./interfaces/IERC20.sol";
+import "./Utils/SafeTransfer.sol";
 
 interface IMisoTokenFactory {
     function createToken(
@@ -40,7 +41,7 @@ interface IMisoMarket {
     ) external payable returns (address newMarket);
 }
 
-contract MISOReceipe {
+contract MISOReceipe is SafeTransfer{
     IMisoTokenFactory public misoTokenFactory;
     IPointList public pointListFactory;
     IMisoLauncher public misoLauncher;
@@ -89,6 +90,8 @@ contract MISOReceipe {
                 abi.encode(_name, _symbol, msg.sender, _initialSupply)
             );
             totalSupply = _initialSupply;
+            IERC20(token).approve(address(misoMarket), _initialSupply);
+            IERC20(token).approve(address(misoLauncher), _initialSupply);
         }
 
         address pointList;
@@ -143,6 +146,10 @@ contract MISOReceipe {
                     _locktime
                 )
             );
+        }
+        uint256 tokenBalanceRemaining = IERC20(token).balanceOf(address(this));
+        if(tokenBalanceRemaining > 0) {
+            _safeTransferFrom(token, address(this), msg.sender, tokenBalanceRemaining);
         }
     }
 }
