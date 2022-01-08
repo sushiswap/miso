@@ -1,6 +1,5 @@
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import contract from "@openzeppelin/contracts/build/contracts/ERC20.json";
 
 const deployFunction: DeployFunction = async function ({
   deployments,
@@ -12,9 +11,8 @@ const deployFunction: DeployFunction = async function ({
   const { deployer } = await getNamedAccounts();
 
   const { address } = await deploy("WrappedNative", {
-    contract,
+    contract: "WETH9",
     from: deployer,
-    args: ["Wrapped Native", "WNATIVE"],
     log: true,
     deterministicDeployment: false,
   });
