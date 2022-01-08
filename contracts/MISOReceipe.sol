@@ -41,7 +41,7 @@ interface IMisoMarket {
     ) external payable returns (address newMarket);
 }
 
-contract MISOReceipe is SafeTransfer{
+contract MISOReceipe is SafeTransfer {
     IMisoTokenFactory public misoTokenFactory;
     IPointList public pointListFactory;
     IMisoLauncher public misoLauncher;
@@ -109,19 +109,16 @@ contract MISOReceipe is SafeTransfer{
                 marketData,
                 (uint256, bytes)
             );
+            uint256 tokenForSale = abi.decode(mData, (uint256));
             newMarket = misoMarket.createMarket(
                 _marketTemplateId,
                 token,
-                totalSupply,
+                tokenForSale,
                 address(0),
-                abi.encode(
-                    msg.sender,
-                    token,
-                    totalSupply,
+                abi.encodePacked(
+                    abi.encode(address(this), token),
                     mData,
-                    msg.sender,
-                    pointList,
-                    msg.sender
+                    abi.encode(msg.sender, pointList, msg.sender)
                 )
             );
         }
@@ -130,13 +127,15 @@ contract MISOReceipe is SafeTransfer{
         {
             (
                 uint256 _launcherTemplateId,
+                uint256 tokenForSale,
                 uint256 _liquidityPercent,
                 uint256 _locktime
-            ) = abi.decode(launcherData, (uint256, uint256, uint256));
+            ) = abi.decode(launcherData, (uint256, uint256, uint256, uint256));
+
             newLauncher = misoLauncher.createLauncher(
                 _launcherTemplateId,
                 token,
-                totalSupply,
+                tokenForSale,
                 address(0),
                 abi.encode(
                     newMarket,
@@ -149,8 +148,13 @@ contract MISOReceipe is SafeTransfer{
             );
         }
         uint256 tokenBalanceRemaining = IERC20(token).balanceOf(address(this));
-        if(tokenBalanceRemaining > 0) {
-            _safeTransferFrom(token, address(this), msg.sender, tokenBalanceRemaining);
+        if (tokenBalanceRemaining > 0) {
+            _safeTransferFrom(
+                token,
+                address(this),
+                msg.sender,
+                tokenBalanceRemaining
+            );
         }
     }
 }
