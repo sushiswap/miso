@@ -116,7 +116,7 @@ contract MISOReceipe is SafeTransfer {
                 tokenForSale,
                 address(0),
                 abi.encodePacked(
-                    abi.encode(address(this), token),
+                    abi.encode(address(misoMarket), token),
                     mData,
                     abi.encode(msg.sender, pointList, msg.sender)
                 )
