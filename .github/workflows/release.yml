@@ -13,10 +13,12 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@sushiswap'
       - run: yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
       # - run: yarn test
       - run: yarn build
       - run: yarn export:all
-      - run: yarn publish --access public --tag canary
+      - run: npm publish --access public --tag canary
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
