@@ -127,10 +127,11 @@ contract MISOReceipe is SafeTransfer {
         {
             (
                 uint256 _launcherTemplateId,
+                uint256 tokenForSale,
                 uint256 _liquidityPercent,
                 uint256 _locktime
-            ) = abi.decode(launcherData, (uint256, uint256, uint256));
-            uint256 tokenForSale = abi.decode(mData, (uint256));
+            ) = abi.decode(launcherData, (uint256, uint256, uint256, uint256));
+
             newLauncher = misoLauncher.createLauncher(
                 _launcherTemplateId,
                 token,
