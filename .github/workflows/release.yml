@@ -2,10 +2,12 @@ name: Publishing to NPM
 on:
   push:
     branches:
+      - master
       - canary
 jobs:
-  build:
+  canary-release:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/canary'
     steps:
       - uses: actions/checkout@v2
       # Setup .npmrc file to publish to npm
@@ -19,6 +21,6 @@ jobs:
       # - run: yarn test
       - run: yarn build
       - run: yarn export:all
-      - run: npm publish --access public --tag canary
+      - run: yarn publish --access public --tag canary
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
