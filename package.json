@@ -5,6 +5,7 @@
     "artifacts",
     "contracts",
     "deployments",
+    "deploy",
     "exports",
     "typechain"
   ],
