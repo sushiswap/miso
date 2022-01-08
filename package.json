@@ -20,6 +20,10 @@
   },
   "license": "GPL-3.0",
   "author": "Chef Gonpachi & Kusatoshi <gonpachi@protonmail.com>",
+  "contributors": [
+    "Matthew Lilley <hello@matthewlilley.com>",
+    "Sarang Parikh"
+  ],
   "scripts": {
     "build": "hardhat compile",
     "console": "hardhat console",
