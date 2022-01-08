@@ -15,7 +15,7 @@ const deployFunction: DeployFunction = async function ({
 
   const { deployer } = await getNamedAccounts();
 
-  const { address } = await deploy("MISOReceipe", {
+  const { address } = await deploy("AuctionCreation", {
     from: deployer,
     log: true,
     args: [
@@ -40,4 +40,4 @@ deployFunction.dependencies = [
   "MISOMarket",
 ];
 
-deployFunction.tags = ["MISOReceipe"];
+deployFunction.tags = ["AuctionCreation"];
