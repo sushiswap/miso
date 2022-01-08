@@ -135,7 +135,7 @@ const config: HardhatUserConfig = {
     },
   },
   typechain: {
-    outDir: "types",
+    outDir: "typechain",
     target: "ethers-v5",
   },
   tenderly: {
