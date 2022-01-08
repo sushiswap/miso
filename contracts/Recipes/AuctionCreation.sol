@@ -49,7 +49,7 @@ interface IMisoMarket {
 // 1. Create Token
 // 2. Create Whitelist (Optional)
 // 3. Create Auction with token address and whitelist address
-// 4. Create Liquidity Launcher with auction and token address 
+// 4. Create Liquidity Launcher with auction and token address
 // 5. Set destination wallet of auction to liquidity launcher
 contract AuctionCreation is SafeTransfer {
     IMisoTokenFactory public misoTokenFactory;
@@ -122,7 +122,12 @@ contract AuctionCreation is SafeTransfer {
                 marketData,
                 (uint256, bytes)
             );
-            tokenForSale = abi.decode(mData, (uint256));
+            // TODO: Replace with individual functions later
+            if (_marketTemplateId == 2) {
+                (, tokenForSale) = abi.decode(mData, (uint256, uint256));
+            } else {
+                tokenForSale = abi.decode(mData, (uint256));
+            }
             newMarket = misoMarket.createMarket(
                 _marketTemplateId,
                 token,
@@ -135,8 +140,6 @@ contract AuctionCreation is SafeTransfer {
                 )
             );
         }
-
-
 
         address newLauncher;
         {
@@ -167,7 +170,7 @@ contract AuctionCreation is SafeTransfer {
         IMisoMarket(newMarket).addAdminRole(msg.sender);
 
         // Have to set auction wallet to the new launcher address AFTER the market is created
-        // new launcher address is casted to payable to satisfy interface.                                                                                                           
+        // new launcher address is casted to payable to satisfy interface.
         IMisoMarket(newMarket).setAuctionWallet(payable(newLauncher));
 
         uint256 tokenBalanceRemaining = IERC20(token).balanceOf(address(this));
