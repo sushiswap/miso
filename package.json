@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/miso",
-  "version": "1.0.0-canary.8",
+  "version": "1.0.0-canary.9",
   "files": [
     "artifacts",
     "contracts",
@@ -42,6 +42,7 @@
     "test:coverage": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" hardhat coverage",
     "test:gas": "cross-env REPORT_GAS=true yarn test",
     "export:all": "hardhat export --export-all exports/all.json",
+    "release:canary": "yarn version:canary && yarn publish:canary",
     "version:canary": "yarn version --prerelease --preid=canary",
     "publish:canary": "yarn publish --access public --tag canary"
   },
