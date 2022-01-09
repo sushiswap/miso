@@ -43,6 +43,15 @@ interface IMisoMarket {
     function setAuctionWallet(address payable _wallet) external;
 
     function addAdminRole(address _address) external;
+
+    function getAuctionTemplate(uint256 _templateId)
+        external
+        view
+        returns (address);
+}
+
+interface IAuctionTemplate {
+    function marketTemplate() external view returns (uint256);
 }
 
 // Auction Creation Recipe
@@ -122,12 +131,9 @@ contract AuctionCreation is SafeTransfer {
                 marketData,
                 (uint256, bytes)
             );
-            // TODO: Replace with individual functions later
-            if (_marketTemplateId == 2) {
-                (, tokenForSale) = abi.decode(mData, (uint256, uint256));
-            } else {
-                tokenForSale = abi.decode(mData, (uint256));
-            }
+
+            tokenForSale = getTokenForSale(_marketTemplateId, mData);
+
             newMarket = misoMarket.createMarket(
                 _marketTemplateId,
                 token,
@@ -184,6 +190,24 @@ contract AuctionCreation is SafeTransfer {
                 msg.sender,
                 tokenBalanceRemaining
             );
+        }
+    }
+
+    function getTokenForSale(uint256 marketTemplateId, bytes memory mData)
+        internal
+        view
+        returns (uint256 tokenForSale)
+    {
+        address auctionTemplate = misoMarket.getAuctionTemplate(
+            marketTemplateId
+        );
+
+        uint256 auctionId = IAuctionTemplate(auctionTemplate).marketTemplate();
+
+        if (auctionId == 1) {
+            (, tokenForSale) = abi.decode(mData, (uint256, uint256));
+        } else {
+            tokenForSale = abi.decode(mData, (uint256));
         }
     }
 }
