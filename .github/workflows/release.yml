@@ -30,7 +30,8 @@ jobs:
             ${{ runner.os }}-yarnv1-dist-
       - name: Installing dependencies
         run: yarn install --frozen-lockfile
-      # - run: yarn test
+        run: yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
+      - run: yarn test
       - run: yarn build
       - run: yarn deploy:testnet
       - run: yarn export:all
