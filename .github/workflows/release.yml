@@ -18,7 +18,7 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
         # Defaults to the user or organization that owns the workflow file
         scope: '@sushiswap'
-      run: |
+    - run: |
         yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
         yarn build
         yarn kovan:deploy
@@ -31,9 +31,9 @@ jobs:
     - run: npm publish --access public --tag canary
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - uses: actions/setup-node@v2
-      with:
-        registry-url: 'https://npm.pkg.github.com'
-    - run: npm publish --access public --tag canary
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - uses: actions/setup-node@v2
+    #   with:
+    #     registry-url: 'https://npm.pkg.github.com'
+    # - run: npm publish --access public --tag canary
+    #   env:
+    #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
