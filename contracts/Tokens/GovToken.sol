@@ -2,7 +2,7 @@ pragma solidity 0.6.12;
 
 import "../interfaces/IMisoToken.sol";
 
-contract DummyToken is IMisoToken {
+contract GovToken is IMisoToken {
     /// @notice Miso template id for the token factory.
     /// @dev For different token types, this must be incremented.
     uint256 public constant override tokenTemplate = 4;
