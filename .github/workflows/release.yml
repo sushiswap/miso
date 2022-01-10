@@ -6,9 +6,9 @@ on:
 jobs:
   canary-release:
     runs-on: ubuntu-latest
+    
     if: github.ref == 'refs/heads/canary'
     steps:
-
       - uses: actions/checkout@v2
 
       - name: Use Node.js 14
@@ -17,19 +17,9 @@ jobs:
           node-version: '14'
           registry-url: 'https://registry.npmjs.org'
           scope: '@sushiswap'
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarnv1-dist-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarnv1-dist-
 
       - name: Installing dependencies
         run: |
@@ -55,6 +45,7 @@ jobs:
           message: Show GitHub logo
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
