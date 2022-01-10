@@ -21,7 +21,7 @@ contract DummyToken is IMisoToken {
 
     /// @notice Total number of tokens in circulation
     // solhint-disable-next-line const-name-snakecase
-    uint256 public totalSupply; // 500 million pStake
+    uint256 public totalSupply; // 500 million
 
     /// @notice Address which may mint new tokens
     address public minter;
