@@ -49,7 +49,7 @@
     "export:all": "hardhat export --export-all exports/all.json",
     "release:canary": "yarn version:canary && yarn publish:canary",
     "version:canary": "yarn version --prerelease --preid=canary",
-    "publish:canary": "yarn publish --access public --tag canary"
+    "publish:canary": "npm publish --access public --tag canary"
   },
   "lint-staged": {
     "*.ts": [
