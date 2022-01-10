@@ -19,7 +19,7 @@ jobs:
         # Defaults to the user or organization that owns the workflow file
         scope: '@sushiswap'
     - run: |
-        npm install
+        npm install --save-dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
         npm run build
         npm run kovan:deploy
         npm run export:all  
