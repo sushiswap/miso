@@ -2,15 +2,13 @@ name: Release
 on:
   push:
     branches:
-      - canary
+      - master
 jobs:
   canary-release:
     runs-on: ubuntu-latest
-    
     if: github.ref == 'refs/heads/canary'
     steps:
       - uses: actions/checkout@v2
-
       - name: Use Node.js 14
         uses: actions/setup-node@v2
         with:
@@ -20,35 +18,30 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Installing dependencies
-        run: |
-          yarn install --frozen-lockfile  
-          yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
-
-      - name: Test
-        run: yarn test
-          yarn test
-
-      - name: Deploy
-        run: yarn deploy:testnet
-
-      - name: Export
-        run: yarn export:all
-          
-      - name: Release
-        run: yarn release:canary
-
-      - name: Commit
-        uses: EndBug/add-and-commit@v7
+      - uses: actions/cache@v2
+        id: yarn-cache
         with:
-          message: Show GitHub logo
-          committer_name: GitHub Actions
-          committer_email: 41898282+github-actions[bot]@users.noreply.github.com
-
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarnv1-dist-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarnv1-dist-
+      - name: Installing dependencies
+        run: yarn install --frozen-lockfile
+        run: yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
+        # run: yarn test
+        run: yarn deploy:testnet
+        run: yarn build
+        run: yarn export:all
+        run: yarn publish --access public --tag canary
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
         INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
         ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
         ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+      - name: Commit
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: release canary
+          committer_name: GitHub Actions
+          committer_email: 41898282+github-actions[bot]@users.noreply.github.com
