@@ -37,3 +37,20 @@ addMinter on MISOAccessControls will allow a project to mint a token and create 
 - initPointList called with admin parameter
 - setPoints called with account parameter set to empty array, and amounts set to array with a single amount (amount should be MAX_NUMBER_OF_TOKENS * TOKEN_DECIMALS * PRICE_PER_TOKEN)
 
+## Adding a token
+
+```sh
+hh --network kovan add:token --address 0xDB992B1f568C824E3636f98a3783d10c8791C65a
+```
+
+## Unlock
+
+```sh
+hh --network kovan lock
+```
+
+## Lock
+
+```sh
+hh --network kovan lock
+```

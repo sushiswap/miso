@@ -41,18 +41,21 @@ const deployFunction: DeployFunction = async function ({
     console.log("MISOTokenFactory adding FixedToken");
     await (await misoTokenFactory.addTokenTemplate(fixedToken.address)).wait();
     console.log("MISOTokenFactory added FixedToken");
+
     const mintableToken = await ethers.getContract("MintableToken");
     console.log("MISOTokenFactory adding MintableToken");
     await (
       await misoTokenFactory.addTokenTemplate(mintableToken.address)
     ).wait();
     console.log("MISOTokenFactory added MintableToken");
+
     const sushiToken = await ethers.getContract("SushiToken");
     console.log("MISOTokenFactory adding SushiToken");
     await (await misoTokenFactory.addTokenTemplate(sushiToken.address)).wait();
     console.log("MISOTokenFactory added SushiToken");
+
     const govToken = await ethers.getContract("GovToken");
-    console.log("MISOTokenFactory adding GoVToken");
+    console.log("MISOTokenFactory adding GovToken");
     await (await misoTokenFactory.addTokenTemplate(govToken.address)).wait();
   }
 };
@@ -64,7 +67,7 @@ deployFunction.dependencies = [
   "FixedToken",
   "MintableToken",
   "SushiToken",
-  "GovToken"
+  "GovToken",
 ];
 
 deployFunction.tags = ["MISOTokenFactory"];
