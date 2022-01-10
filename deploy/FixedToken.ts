@@ -14,6 +14,7 @@ const deployFunction: DeployFunction = async function ({
     from: deployer,
     log: true,
     deterministicDeployment: false,
+    waitConfirmations: 3
   });
 
   console.log("FixedToken deployed at ", address);
