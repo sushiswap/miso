@@ -26,8 +26,12 @@ task(
     const postAuctionLauncher = await ethers.getContract("PostAuctionLauncher");
     const sushiToken = await ethers.getContract("SushiToken");
     const auctionCreation = await ethers.getContract("AuctionCreation");
-
-    const contracts = [
+    const govToken = await ethers.getContract("GovToken");
+    const contracts: {
+      name: string;
+      address: string;
+      constructorArguments?: string[];
+    }[] = [
       {
         name: "BatchAuction",
         address: batchAuction.address,
@@ -115,6 +119,10 @@ task(
           FACTORY_ADDRESS[chainId],
         ],
       },
+      {
+        name: "GovToken",
+        address: govToken.address,
+      },
     ];
 
     for (const { address, constructorArguments } of contracts) {
@@ -142,6 +150,23 @@ task("accounts", "Prints the list of accounts", async (args, { ethers }) => {
     console.log(await account.address);
   }
 });
+
+task("add:token", "Adds token")
+  .addParam("address", "New Token")
+  .setAction(async function (
+    { address },
+    { ethers: { getNamedSigner, getContract } }
+  ) {
+    const admin = await getNamedSigner("admin");
+
+    const misoTokenFactory = await getContract("MISOTokenFactory", admin);
+
+    console.log("Adding token...");
+
+    await (await misoTokenFactory.addTokenTemplate(address)).wait();
+
+    console.log("Token added!");
+  });
 
 task("add:admin", "Adds admin")
   .addParam("address", "New Admin")
