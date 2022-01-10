@@ -108,7 +108,7 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       tags: ["staging"],
-      gasMultiplier: 15,
+      gasMultiplier: 10,
     },
     polygon: {
       url: "https://polygon-rpc.com",
