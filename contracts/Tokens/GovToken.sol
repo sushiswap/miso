@@ -1,27 +1,28 @@
 pragma solidity 0.6.12;
 
 import "../interfaces/IMisoToken.sol";
+import "../interfaces/IERC20.sol";
 
-contract GovToken is IMisoToken {
+contract GovToken is IERC20, IMisoToken {
     /// @notice Miso template id for the token factory.
     /// @dev For different token types, this must be incremented.
     uint256 public constant override tokenTemplate = 4;
 
     /// @notice EIP-20 token name for this token
     // solhint-disable-next-line const-name-snakecase
-    string public name;
+    string public override name;
 
     /// @notice EIP-20 token symbol for this token
     // solhint-disable-next-line const-name-snakecase
-    string public symbol;
+    string public override symbol;
 
     /// @notice EIP-20 token decimals for this token
     // solhint-disable-next-line const-name-snakecase
-    uint8 public decimals = 18;
+    uint8 public override decimals = 18;
 
     /// @notice Total number of tokens in circulation
     // solhint-disable-next-line const-name-snakecase
-    uint256 public totalSupply;
+    uint256 public override totalSupply;
 
     /// @notice Address which may mint new tokens
     address public minter;
@@ -160,6 +161,7 @@ contract GovToken is IMisoToken {
      */
     function allowance(address account, address spender)
         external
+        override
         view
         returns (uint256)
     {
@@ -176,6 +178,7 @@ contract GovToken is IMisoToken {
      */
     function approve(address spender, uint256 rawAmount)
         external
+        override
         returns (bool)
     {
         uint96 amount;
@@ -209,7 +212,7 @@ contract GovToken is IMisoToken {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external {
+    ) external override {
         uint96 amount;
         if (rawAmount == uint256(-1)) {
             amount = uint96(-1);
@@ -253,7 +256,7 @@ contract GovToken is IMisoToken {
      * @param account The address of the account to get the balance of
      * @return The number of tokens held
      */
-    function balanceOf(address account) external view returns (uint256) {
+    function balanceOf(address account) external override view returns (uint256) {
         return balances[account];
     }
 
