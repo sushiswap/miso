@@ -43,3 +43,9 @@ jobs:
             INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
             ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
             ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+
+      - uses: EndBug/add-and-commit@v7
+        with:
+          message: Show GitHub logo
+          committer_name: GitHub Actions
+          committer_email: 41898282+github-actions[bot]@users.noreply.github.com
