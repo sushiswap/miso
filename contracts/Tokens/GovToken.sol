@@ -122,6 +122,22 @@ contract GovToken is IERC20, IMisoToken {
     }
 
     /**
+     * @dev Generates init data for Token Factory
+     * @param _name - Token name
+     * @param _symbol - Token symbol
+     * @param _owner - Contract owner
+     * @param _initialSupply Amount of tokens minted on creation
+     */
+    function getInitData(
+        string calldata _name,
+        string calldata _symbol,
+        address _owner,
+        uint256 _initialSupply
+    ) external pure returns (bytes memory _data) {
+        return abi.encode(_name, _symbol, _owner, _initialSupply);
+    }
+
+    /**
      * @notice Change the minter address
      * @param minter_ The address of the new minter
      */
