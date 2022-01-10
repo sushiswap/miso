@@ -26,6 +26,7 @@ contract GovToken is IERC20, IMisoToken {
 
     /// @notice Address which may mint new tokens
     address public minter;
+    bool private _initialized;
 
     /// @notice Allowance amounts on behalf of others
     mapping(address => mapping(address => uint96)) internal allowances;
@@ -103,6 +104,7 @@ contract GovToken is IERC20, IMisoToken {
         name = _name;
         symbol = _symbol;
         minter = _owner;
+        _initialized = true;
         _mint(msg.sender, _initialSupply);
     }
 
@@ -161,8 +163,8 @@ contract GovToken is IERC20, IMisoToken {
      */
     function allowance(address account, address spender)
         external
-        override
         view
+        override
         returns (uint256)
     {
         return allowances[account][spender];
@@ -256,7 +258,12 @@ contract GovToken is IERC20, IMisoToken {
      * @param account The address of the account to get the balance of
      * @return The number of tokens held
      */
-    function balanceOf(address account) external override view returns (uint256) {
+    function balanceOf(address account)
+        external
+        view
+        override
+        returns (uint256)
+    {
         return balances[account];
     }
 
@@ -267,10 +274,7 @@ contract GovToken is IERC20, IMisoToken {
      * @return Whether or not the transfer succeeded
      */
     function transfer(address dst, uint256 rawAmount) external returns (bool) {
-        uint96 amount = safe96(
-            rawAmount,
-            "amount > 96 bits"
-        );
+        uint96 amount = safe96(rawAmount, "amount > 96 bits");
         _transferTokens(msg.sender, dst, amount);
         return true;
     }
@@ -289,10 +293,7 @@ contract GovToken is IERC20, IMisoToken {
     ) external returns (bool) {
         address spender = msg.sender;
         uint96 spenderAllowance = allowances[src][spender];
-        uint96 amount = safe96(
-            rawAmount,
-            "amount > 96 bits"
-        );
+        uint96 amount = safe96(rawAmount, "amount > 96 bits");
 
         if (spender != src && spenderAllowance != uint96(-1)) {
             uint96 newAllowance = sub96(
@@ -349,14 +350,8 @@ contract GovToken is IERC20, IMisoToken {
             abi.encodePacked("\x19\x01", domainSeparator, structHash)
         );
         address signatory = ecrecover(digest, v, r, s);
-        require(
-            signatory != address(0),
-            "delegateBySig: invalid signature"
-        );
-        require(
-            nonce == nonces[signatory]++,
-            "delegateBySig: invalid nonce"
-        );
+        require(signatory != address(0), "delegateBySig: invalid signature");
+        require(nonce == nonces[signatory]++, "delegateBySig: invalid nonce");
         require(now <= expiry, "delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
