@@ -53,10 +53,6 @@ const deployFunction: DeployFunction = async function ({
     console.log("MISOTokenFactory adding SushiToken");
     await (await misoTokenFactory.addTokenTemplate(sushiToken.address)).wait();
     console.log("MISOTokenFactory added SushiToken");
-
-    const govToken = await ethers.getContract("GovToken");
-    console.log("MISOTokenFactory adding GovToken");
-    await (await misoTokenFactory.addTokenTemplate(govToken.address)).wait();
   }
 };
 

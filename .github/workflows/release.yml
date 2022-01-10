@@ -34,7 +34,7 @@ jobs:
           yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
           yarn test
           yarn build
-          yarn deploy:testnet
+          yarn kovan:deploy
           yarn export:all
           yarn release:canary
         env:
@@ -46,6 +46,6 @@ jobs:
 
       - uses: EndBug/add-and-commit@v7
         with:
-          message: Show GitHub logo
+          message: canary release
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
