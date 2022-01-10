@@ -102,7 +102,7 @@ contract GovToken is IMisoToken {
         name = _name;
         symbol = _symbol;
         minter = _owner;
-        mint(msg.sender, _initialSupply);
+        _mint(msg.sender, _initialSupply);
     }
 
     function init(bytes calldata _data) external payable override {}
