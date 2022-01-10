@@ -17,11 +17,11 @@ contract GovToken is IMisoToken {
 
     /// @notice EIP-20 token decimals for this token
     // solhint-disable-next-line const-name-snakecase
-    uint8 public decimals;
+    uint8 public decimals = 18;
 
     /// @notice Total number of tokens in circulation
     // solhint-disable-next-line const-name-snakecase
-    uint256 public totalSupply; // 500 million
+    uint256 public totalSupply;
 
     /// @notice Address which may mint new tokens
     address public minter;
