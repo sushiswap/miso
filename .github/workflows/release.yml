@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - canary
 jobs:
   canary-release:
     runs-on: ubuntu-latest
