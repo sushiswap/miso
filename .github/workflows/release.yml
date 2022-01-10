@@ -29,13 +29,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarnv1-dist-
       - name: Installing dependencies
-        run: yarn install --frozen-lockfile
-        run: yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
-      - run: yarn test
-      - run: yarn build
-      - run: yarn deploy:testnet
-      - run: yarn export:all
-      - run: yarn release:canary
-        env:
+        run: |
+          yarn install --frozen-lockfile  
+          yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
+          yarn test
+          yarn build
+      - name: Deploy
+        run: |
+          yarn deploy:testnet
+          yarn export:all
+      - name: Release
+        run: yarn release:canary
+      env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
