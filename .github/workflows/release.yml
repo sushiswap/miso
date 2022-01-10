@@ -7,51 +7,23 @@ jobs:
   canary:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '16.x'
-        registry-url: 'https://registry.npmjs.org'
-        # Defaults to the user or organization that owns the workflow file
-        scope: '@sushiswap'
-    - run: |
-        yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
-        yarn build
-        yarn kovan:deploy
-        yarn export:all
-      env:
-        MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
-        INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
-        ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
-        ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
-    - run: |
-        npm version -f prerelease --preid=canary
-        npm publish --access public --tag canary
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - uses: actions/setup-node@v2
-      with:
-        registry-url: 'https://npm.pkg.github.com'
-    - run: npm publish --access public --tag canary
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    # - run: npm version -f prerelease --preid=canary
-    # - run: npm publish --access public --tag canary
-    #   env:
-    #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    # - uses: actions/setup-node@v2
-    #   with:
-    #     registry-url: 'https://npm.pkg.github.com'
-    # - run: npm publish --access public --tag canary
-    #   env:
-    #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - uses: EndBug/add-and-commit@v7
-      with:
-        message: 'release: canary'
-        committer_name: GitHub Actions
-        committer_email: 41898282+github-actions[bot]@users.noreply.github.com
+      - uses: actions/checkout@v2
+      # - uses: actions/cache@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          # Defaults to the user or organization that owns the workflow file
+          scope: '@sushiswap'
+      - run: yarn
+      - run: yarn build
+      - run: yarn kovan:deploy
+      - run: yarn export:all
+      - run: yarn version --prerelease --preid=canary
+      - run: yarn publish --access public --tag canary
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
