@@ -1,10 +1,10 @@
-name: Release Canary
+name: Release
 on:
   push:
     branches:
       - canary
 jobs:
-  release:
+  canary:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -13,7 +13,7 @@ jobs:
         node-version: '14'
         cache: 'yarn'
         cache-dependency-path: '**/yarn.lock'
-    - run: yarn --frozen-lockfile  
+    - run: yarn add --dev @nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers ethers
     - run: yarn build
     - run: |
         yarn kovan:deploy

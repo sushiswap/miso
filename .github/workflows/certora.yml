@@ -2,9 +2,9 @@ name: Certora
 
 on:
   push:
-    branches: [master, canary, Automation]
+    branches: [master]
   pull_request:
-    branches: [master, canary]
+    branches: [master]
 
   workflow_dispatch:
 
