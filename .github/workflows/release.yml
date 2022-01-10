@@ -31,12 +31,12 @@ jobs:
           # scope: '@sushiswap'
       - run: yarn
       - run: yarn build
-      # - run: yarn kovan:deploy
-      #   env:
-      #     MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
-      #     INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
-      #     ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
-      #     ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+      - run: yarn kovan:deploy
+        env:
+          MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
       - run: yarn export:all
       - run: |
           git config user.name github-actions
@@ -47,4 +47,3 @@ jobs:
           git push
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
