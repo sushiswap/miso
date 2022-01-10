@@ -30,9 +30,11 @@ jobs:
             ${{ runner.os }}-yarnv1-dist-
       - name: Installing dependencies
         run: yarn install --frozen-lockfile
-      # - run: yarn test
+      - run: yarn test
       - run: yarn build
+      - run: yarn deploy:testnet
       - run: yarn export:all
-      - run: yarn publish --access public --tag canary
+      - run: yarn release:canary
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
