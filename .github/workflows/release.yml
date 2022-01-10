@@ -1,8 +1,9 @@
 name: Release Canary
-  on:
-    push:
-      branches:
-        - canary
+on:
+  push:
+    branches:
+      - canary
+jobs:
   release:
     runs-on: ubuntu-latest
     steps:
