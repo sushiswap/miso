@@ -22,7 +22,7 @@ const accounts = {
     "test test test test test test test test test test test junk",
 };
 
-import "./cli";
+import "./tasks";
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
