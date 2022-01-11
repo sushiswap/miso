@@ -252,10 +252,15 @@ contract ERC20 is IERC20, Context {
     function _transfer(address sender, address recipient, uint256 amount) internal virtual {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
+
+        _beforeTokenTransfer(sender, recipient, amount);
+
         _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
         _balances[recipient] = _balances[recipient].add(amount);
+        
+        _afterTokenTransfer(sender, recipient, amount);
+        
         emit Transfer(sender, recipient, amount);
-        _beforeTokenTransfer(sender, recipient, amount);
     }
 
     /** @dev Creates `amount` tokens and assigns them to `account`, increasing
@@ -269,10 +274,15 @@ contract ERC20 is IERC20, Context {
      */
     function _mint(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: mint to the zero address");
+
+        _beforeTokenTransfer(address(0), account, amount);
+
         _totalSupply = _totalSupply.add(amount);
         _balances[account] = _balances[account].add(amount);
+
+        _afterTokenTransfer(address(0), account, amount);
+
         emit Transfer(address(0), account, amount);
-        _beforeTokenTransfer(address(0), account, amount);
     }
 
     /**
@@ -289,11 +299,14 @@ contract ERC20 is IERC20, Context {
     function _burn(address account, uint256 amount) internal virtual {
         require(account != address(0), "ERC20: burn from the zero address");
 
-        _balances[account] = _balances[account].sub(amount, "ERC20: burn amount exceeds balance");
-        _totalSupply = _totalSupply.sub(amount);
-        emit Transfer(account, address(0), amount);
         _beforeTokenTransfer(account, address(0), amount);
 
+        _balances[account] = _balances[account].sub(amount, "ERC20: burn amount exceeds balance");
+        _totalSupply = _totalSupply.sub(amount);
+        
+        _afterTokenTransfer(account, address(0), amount);
+
+        emit Transfer(account, address(0), amount);
     }
 
     /**
@@ -343,4 +356,6 @@ contract ERC20 is IERC20, Context {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
+
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal virtual { }
 }
