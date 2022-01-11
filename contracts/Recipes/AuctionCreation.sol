@@ -90,86 +90,22 @@ contract AuctionCreation is SafeTransfer {
     ) external payable {
         require(_accounts.length == _amounts.length, "!len");
 
-        address token;
-        uint256 totalSupply;
-        {
-            (
-                uint256 _misoTokenFactoryTemplateId,
-                string memory _name,
-                string memory _symbol,
-                uint256 _initialSupply
-            ) = abi.decode(
-                    tokenFactoryData,
-                    (uint256, string, string, uint256)
-                );
+        address token = createToken(tokenFactoryData);
 
-            token = misoTokenFactory.createToken(
-                _misoTokenFactoryTemplateId,
-                address(0),
-                abi.encode(_name, _symbol, msg.sender, _initialSupply)
-            );
-            totalSupply = _initialSupply;
-            IERC20(token).approve(address(misoMarket), _initialSupply);
-            IERC20(token).approve(address(misoLauncher), _initialSupply);
-        }
+        address pointList = createPointList(_accounts, _amounts);
 
-        address pointList;
-        if (_accounts.length != 0) {
-            pointList = pointListFactory.deployPointList(
-                msg.sender,
-                _accounts,
-                _amounts
-            );
-        }
+        (address newMarket, uint256 tokenForSale) = createMarket(
+            marketData,
+            token,
+            pointList
+        );
 
-        address newMarket;
-
-        uint256 tokenForSale;
-
-        {
-            (uint256 _marketTemplateId, bytes memory mData) = abi.decode(
-                marketData,
-                (uint256, bytes)
-            );
-
-            tokenForSale = getTokenForSale(_marketTemplateId, mData);
-
-            newMarket = misoMarket.createMarket(
-                _marketTemplateId,
-                token,
-                tokenForSale,
-                address(0),
-                abi.encodePacked(
-                    abi.encode(address(misoMarket), token),
-                    mData,
-                    abi.encode(address(this), pointList, msg.sender)
-                )
-            );
-        }
-
-        address newLauncher;
-        {
-            (
-                uint256 _launcherTemplateId,
-                uint256 _liquidityPercent,
-                uint256 _locktime
-            ) = abi.decode(launcherData, (uint256, uint256, uint256));
-
-            newLauncher = misoLauncher.createLauncher(
-                _launcherTemplateId,
-                token,
-                tokenForSale,
-                address(0),
-                abi.encode(
-                    newMarket,
-                    factory,
-                    msg.sender,
-                    msg.sender,
-                    _liquidityPercent,
-                    _locktime
-                )
-            );
-        }
+        address newLauncher = createLauncher(
+            launcherData,
+            token,
+            tokenForSale,
+            newMarket
+        );
 
         // Miso market has to give admin role to the user, since it's set to this contract initially
         // to allow the auction wallet to be set to launcher once it's been deployed
@@ -181,16 +117,95 @@ contract AuctionCreation is SafeTransfer {
 
         uint256 tokenBalanceRemaining = IERC20(token).balanceOf(address(this));
         if (tokenBalanceRemaining > 0) {
-            // Approve this contract to send remaining tokens back to the user
-            IERC20(token).approve(address(this), tokenBalanceRemaining);
+            _safeTransfer(token, msg.sender, tokenBalanceRemaining);
+        }
+    }
 
-            _safeTransferFrom(
-                token,
-                address(this),
+    function createToken(bytes memory tokenFactoryData)
+        internal
+        returns (address token)
+    {
+        (
+            uint256 _misoTokenFactoryTemplateId,
+            string memory _name,
+            string memory _symbol,
+            uint256 _initialSupply
+        ) = abi.decode(tokenFactoryData, (uint256, string, string, uint256));
+
+        token = misoTokenFactory.createToken(
+            _misoTokenFactoryTemplateId,
+            address(0),
+            abi.encode(_name, _symbol, msg.sender, _initialSupply)
+        );
+
+        IERC20(token).approve(address(misoMarket), _initialSupply);
+        IERC20(token).approve(address(misoLauncher), _initialSupply);
+    }
+
+    function createPointList(
+        address[] memory _accounts,
+        uint256[] memory _amounts
+    ) internal returns (address pointList) {
+        if (_accounts.length != 0) {
+            pointList = pointListFactory.deployPointList(
                 msg.sender,
-                tokenBalanceRemaining
+                _accounts,
+                _amounts
             );
         }
+    }
+
+    function createMarket(
+        bytes memory marketData,
+        address token,
+        address pointList
+    ) internal returns (address newMarket, uint256 tokenForSale) {
+        (uint256 _marketTemplateId, bytes memory mData) = abi.decode(
+            marketData,
+            (uint256, bytes)
+        );
+
+        tokenForSale = getTokenForSale(_marketTemplateId, mData);
+
+        newMarket = misoMarket.createMarket(
+            _marketTemplateId,
+            token,
+            tokenForSale,
+            address(0),
+            abi.encodePacked(
+                abi.encode(address(misoMarket), token),
+                mData,
+                abi.encode(address(this), pointList, msg.sender)
+            )
+        );
+    }
+
+    function createLauncher(
+        bytes memory launcherData,
+        address token,
+        uint256 tokenForSale,
+        address newMarket
+    ) internal returns (address newLauncher) {
+        (
+            uint256 _launcherTemplateId,
+            uint256 _liquidityPercent,
+            uint256 _locktime
+        ) = abi.decode(launcherData, (uint256, uint256, uint256));
+
+        newLauncher = misoLauncher.createLauncher(
+            _launcherTemplateId,
+            token,
+            tokenForSale,
+            address(0),
+            abi.encode(
+                newMarket,
+                factory,
+                msg.sender,
+                msg.sender,
+                _liquidityPercent,
+                _locktime
+            )
+        );
     }
 
     function getTokenForSale(uint256 marketTemplateId, bytes memory mData)
@@ -202,9 +217,9 @@ contract AuctionCreation is SafeTransfer {
             marketTemplateId
         );
 
-        uint256 auctionId = IAuctionTemplate(auctionTemplate).marketTemplate();
+        uint256 auctionTemplateId = IAuctionTemplate(auctionTemplate).marketTemplate();
 
-        if (auctionId == 1) {
+        if (auctionTemplateId == 1) {
             (, tokenForSale) = abi.decode(mData, (uint256, uint256));
         } else {
             tokenForSale = abi.decode(mData, (uint256));
