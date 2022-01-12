@@ -7,7 +7,7 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  canary:
+  canary-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,7 +23,7 @@ jobs:
           yarn export:all
           git config user.name GitHub Actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git diff --quiet deployments || (git commit -am 'deployments & exports' && git push)
+          git diff --quiet deployments || (git commit -am 'generated' && git push)
           yarn version --prerelease --preid=canary
           yarn publish --access public --tag canary
           git push
