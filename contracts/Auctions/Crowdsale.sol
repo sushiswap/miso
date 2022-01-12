@@ -115,16 +115,23 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     /// @notice Amount of tokens to claim per address.
     mapping(address => uint256) public claimed;
 
+    /// @notice Event for all auction data. Emmited on deployment.
+    event AuctionDeployed(address funder, address token, address paymentCurrency, uint256 totalTokens, address admin, address wallet);
+    
     /// @notice Event for updating auction times.  Needs to be before auction starts.
     event AuctionTimeUpdated(uint256 startTime, uint256 endTime); 
     /// @notice Event for updating auction prices. Needs to be before auction starts.
     event AuctionPriceUpdated(uint256 rate, uint256 goal); 
     /// @notice Event for updating auction wallet. Needs to be before auction starts.
     event AuctionWalletUpdated(address wallet); 
+    /// @notice Event for updating the point list.
+    event AuctionPointListUpdated(address pointList, bool enabled);
 
     /// @notice Event for adding a commitment.
     event AddedCommitment(address addr, uint256 commitment);
-    
+    /// @notice Event for token withdrawals.
+    event TokensWithdrawn(address token, address to, uint256 amount);
+
     /// @notice Event for finalization of the crowdsale
     event AuctionFinalized();
     /// @notice Event for cancellation of the auction.
@@ -189,6 +196,10 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
         require(_getTokenAmount(_goal) <= _totalTokens, "Crowdsale: goal should be equal to or lower than total tokens");
 
         _safeTransferFrom(_token, _funder, _totalTokens);
+
+        emit AuctionDeployed(_funder, _token, _paymentCurrency, _totalTokens, _admin, _wallet);
+        emit AuctionTimeUpdated(_startTime, _endTime);
+        emit AuctionPriceUpdated(_rate, _goal);
     }
 
 
@@ -338,6 +349,8 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             require(tokensToClaim > 0, "Crowdsale: no tokens to claim"); 
             claimed[beneficiary] = claimed[beneficiary].add(tokensToClaim);
             _safeTokenPayment(auctionToken, beneficiary, tokensToClaim);
+
+            emit TokensWithdrawn(auctionToken, beneficiary, tokensToClaim);
         } else {
             /// @dev Auction did not meet reserve price.
             /// @dev Return committed funds back to user.
@@ -345,6 +358,8 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             uint256 accountBalance = commitments[beneficiary];
             commitments[beneficiary] = 0; // Stop multiple withdrawals and free some gas
             _safeTokenPayment(paymentCurrency, beneficiary, accountBalance);
+
+            emit TokensWithdrawn(paymentCurrency, beneficiary, accountBalance);
         }
     }
 
@@ -394,11 +409,17 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             uint256 unsoldTokens = uint256(info.totalTokens).sub(soldTokens);
             if(unsoldTokens > 0) {
                 _safeTokenPayment(auctionToken, wallet, unsoldTokens);
+
+                emit TokensWithdrawn(auctionToken, wallet, unsoldTokens);
             }
+
+            emit TokensWithdrawn(paymentCurrency, wallet, uint256(status.commitmentsTotal));
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
             _safeTokenPayment(auctionToken, wallet, uint256(info.totalTokens));
+
+            emit TokensWithdrawn(auctionToken, wallet, uint256(info.totalTokens));
         }
 
         status.finalized = true;
@@ -421,6 +442,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
         status.finalized = true;
         emit AuctionCancelled();
+        emit TokensWithdrawn(auctionToken, wallet, uint256(marketInfo.totalTokens));
     }
 
     function tokenPrice() public view returns (uint256) {
@@ -521,6 +543,8 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
     function enableList(bool _status) external {
         require(hasAdminRole(msg.sender));
         marketStatus.usePointList = _status;
+
+        emit AuctionPointListUpdated(pointList, marketStatus.usePointList);
     }
 
     function _setList(address _pointList) private {
@@ -528,6 +552,8 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             pointList = _pointList;
             marketStatus.usePointList = true;
         }
+
+        emit AuctionPointListUpdated(pointList, marketStatus.usePointList);
     }
 
     //--------------------------------------------------------

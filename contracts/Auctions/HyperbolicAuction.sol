@@ -106,15 +106,23 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     mapping(address => uint256) public commitments;
     /// @notice Amount of tokens to claim per address.
     mapping(address => uint256) public claimed;
+    
+    /// @notice Event for all auction data. Emmited on deployment.
+    event AuctionDeployed(address funder, address token, uint256 totalTokens, address paymentCurrency, address admin, address wallet);
 
     /// @notice Event for updating auction times.  Needs to be before auction starts.
     event AuctionTimeUpdated(uint256 startTime, uint256 endTime); 
     /// @notice Event for updating auction prices. Needs to be before auction starts.
-    event AuctionPriceUpdated( uint256 minimumPrice); 
+    event AuctionPriceUpdated(uint256 minimumPrice); 
     /// @notice Event for updating auction wallet. Needs to be before auction starts.
     event AuctionWalletUpdated(address wallet); 
+    /// @notice Event for updating the point list.
+    event AuctionPointListUpdated(address pointList, bool enabled);
 
+    /// @notice Event for adding a commitment.
     event AddedCommitment(address addr, uint256 commitment);
+    /// @notice Event for token withdrawals.
+    event TokensWithdrawn(address token, address to, uint256 amount);
 
     /// @notice Event for finalization of the auction.
     event AuctionFinalized();
@@ -182,6 +190,10 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
         marketPrice.alpha = BoringMath.to128(_alpha);
 
         _safeTransferFrom(_token, _funder, _totalTokens);
+
+        emit AuctionDeployed(_funder, _token, _totalTokens, _paymentCurrency, _admin, _wallet);
+        emit AuctionTimeUpdated(_startTime, _endTime);
+        emit AuctionPriceUpdated(_minimumPrice);
     }
 
 
@@ -413,11 +425,15 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
             /// @dev Successful auction
             /// @dev Transfer contributed tokens to wallet.
             _safeTokenPayment(paymentCurrency, wallet, uint256(status.commitmentsTotal));
+
+            emit TokensWithdrawn(paymentCurrency, wallet, uint256(status.commitmentsTotal));
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
             require(block.timestamp > uint256(info.endTime), "HyperbolicAuction: auction has not finished yet"); 
             _safeTokenPayment(auctionToken, wallet, uint256(info.totalTokens));
+
+            emit TokensWithdrawn(auctionToken, wallet, uint256(info.totalTokens));
         }
         status.finalized = true;
         emit AuctionFinalized();
@@ -438,6 +454,7 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
 
         status.finalized = true;
         emit AuctionCancelled();
+        emit TokensWithdrawn(auctionToken, wallet, uint256(marketInfo.totalTokens));
     }
 
     /** 
@@ -474,6 +491,8 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
             claimed[beneficiary] = claimed[beneficiary].add(tokensToClaim);
 
             _safeTokenPayment(auctionToken, beneficiary, tokensToClaim);
+
+            emit TokensWithdrawn(auctionToken, beneficiary, tokensToClaim);
         } else {
             /// @dev Auction did not meet reserve price.
             /// @dev Return committed funds back to user.
@@ -481,6 +500,8 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
             uint256 fundsCommitted = commitments[beneficiary];
             commitments[beneficiary] = 0; // Stop multiple withdrawals and free some gas
             _safeTokenPayment(paymentCurrency, beneficiary, fundsCommitted);
+
+            emit TokensWithdrawn(paymentCurrency, beneficiary, fundsCommitted);
         }
     }
 
@@ -521,6 +542,8 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
     function enableList(bool _status) external {
         require(hasAdminRole(msg.sender));
         marketStatus.usePointList = _status;
+
+        emit AuctionPointListUpdated(pointList, marketStatus.usePointList);
     }
 
     function _setList(address _pointList) private {
@@ -528,6 +551,8 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
             pointList = _pointList;
             marketStatus.usePointList = true;
         }
+
+        emit AuctionPointListUpdated(pointList, marketStatus.usePointList);
     }
 
     //--------------------------------------------------------
