@@ -195,7 +195,7 @@ contract AuctionCreation is SafeTransfer {
         newLauncher = misoLauncher.createLauncher(
             _launcherTemplateId,
             token,
-            (tokenForSale * _liquidityPercent) / 100,
+            (tokenForSale * _liquidityPercent) / 10000,
             address(0),
             abi.encode(
                 newMarket,
