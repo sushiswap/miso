@@ -24,8 +24,9 @@
     "Matthew Lilley <hello@matthewlilley.com>",
     "Sarang Parikh"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sushiswap/miso.git"
   },
   "scripts": {
     "build": "hardhat compile",

@@ -25,8 +25,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@sushiswap'
       - run: yarn
       - run: yarn build
       - run: yarn kovan:deploy
@@ -36,11 +34,13 @@ jobs:
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
           ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
       - run: yarn export:all
+      - run: yarn version --prerelease --preid=canary
+      - run: yarn publish --access public --tag canary
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: |
           git config user.name GitHub Actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          yarn version --prerelease --preid=canary
-          yarn publish --access public --tag canary
           git add .
           git push
         env:
