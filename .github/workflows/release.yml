@@ -16,17 +16,6 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
           cache: 'yarn'
-      - run: yarn
-      - run: yarn build
-      - run: yarn kovan:deploy
-      - run: yarn export:all
-      - run: |
-          git config user.name GitHub Actions
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git diff --quiet deployments || (git commit -am 'release: deployments & exports' && git push)
-      - run: yarn version --prerelease --preid=canary
-      - run: yarn publish --access public --tag canary
-      - run: git push
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -34,3 +23,13 @@ jobs:
           INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
           ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+      - run: yarn
+      - run: yarn build
+      - run: yarn kovan:deploy
+      - run: yarn export:all
+      - run: git config user.name GitHub Actions
+      - run: git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - run: git diff --quiet deployments || (git commit -am 'deployments & exports' && git push)
+      - run: yarn version --prerelease --preid=canary
+      - run: yarn publish --access public --tag canary
+      - run: git push
