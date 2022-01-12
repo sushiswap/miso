@@ -38,12 +38,14 @@ jobs:
           git config user.name GitHub Actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git commit -am 'release: deployments & exports'
+          git push
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: yarn version --prerelease --preid=canary
       - run: yarn publish --access public --tag canary
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: git push
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
