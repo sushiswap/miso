@@ -1,6 +1,6 @@
 {
   "name": "@sushiswap/miso",
-  "version": "1.0.0-canary.33",
+  "version": "1.0.0-canary.34",
   "files": [
     "artifacts",
     "contracts",
