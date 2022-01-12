@@ -69,7 +69,7 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
     function mint(address _to, uint256 _amount) public  {
         require(hasRole(MINTER_ROLE, _msgSender()), "SushiToken: must have minter role to mint");
         _mint(_to, _amount);
-        // _moveDelegates(address(0), _delegates[_to], _amount);
+        _moveDelegates(address(0), _delegates[_to], _amount);
     }
 
     // Copied and modified from YAM code:
