@@ -308,7 +308,7 @@ contract SushiToken is IMisoToken, AccessControl, ERC20 {
      * @inheritdoc ERC20
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal override { 
-        _moveDelegates(from, _delegates[to], amount);
+        _moveDelegates(_delegates[from], _delegates[to], amount);
         super._beforeTokenTransfer(from, to, amount);
     }
 }
