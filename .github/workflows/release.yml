@@ -19,22 +19,18 @@ jobs:
       - run: yarn
       - run: yarn build
       - run: yarn kovan:deploy
-        env:
-          MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
-          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
-          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
-          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
       - run: yarn export:all
       - run: |
           git config user.name GitHub Actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git diff --quiet deployments || (git commit -am 'release: deployments & exports' && git push)
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: yarn version --prerelease --preid=canary
       - run: yarn publish --access public --tag canary
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: git push
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          MNEMONIC: ${{ secrets.TESTNET_MNEMONIC }}
+          INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
