@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 
-task("add:token", "Adds token")
-  .addParam("address", "New Token")
+task("add-token", "Adds token")
+  .addParam("address", "New token")
   .setAction(async function (
     { address },
     { ethers: { getNamedSigner, getContract } }
