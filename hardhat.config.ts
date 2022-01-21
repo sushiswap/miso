@@ -119,7 +119,7 @@ const config: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     harmony: {
-      url: "https://api.s0.t.hmny.io",
+      url: "https://api.harmony.one/",
       accounts,
       chainId: 1666600000,
       live: true,
