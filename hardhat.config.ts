@@ -118,6 +118,14 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
       gasMultiplier: 2,
     },
+    harmony: {
+      url: "https://api.s0.t.hmny.io",
+      accounts,
+      chainId: 1666600000,
+      live: true,
+      saveDeployments: true,
+      gasMultiplier: 2,
+    },
   },
   preprocess: {
     eachLine: removeConsoleLog(
