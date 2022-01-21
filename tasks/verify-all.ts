@@ -26,7 +26,6 @@ task(
     const postAuctionLauncher = await ethers.getContract("PostAuctionLauncher");
     const sushiToken = await ethers.getContract("SushiToken");
     const auctionCreation = await ethers.getContract("AuctionCreation");
-    const govToken = await ethers.getContract("GovToken");
     const contracts: {
       name: string;
       address: string;
@@ -118,10 +117,6 @@ task(
           market.address,
           FACTORY_ADDRESS[chainId],
         ],
-      },
-      {
-        name: "GovToken",
-        address: govToken.address,
       },
     ];
 
