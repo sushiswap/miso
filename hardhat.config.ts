@@ -1,31 +1,29 @@
-import "dotenv/config";
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-etherscan";
-import "@nomiclabs/hardhat-solhint";
-import "@nomiclabs/hardhat-waffle";
-import "hardhat-deploy";
+import 'dotenv/config'
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
+import '@nomiclabs/hardhat-etherscan'
+import '@nomiclabs/hardhat-solhint'
+import '@nomiclabs/hardhat-waffle'
+import 'hardhat-deploy'
 // import "hardhat-deploy-ethers";
-import "hardhat-gas-reporter";
-import "hardhat-spdx-license-identifier";
-import "hardhat-watcher";
-import "solidity-coverage";
-import "@tenderly/hardhat-tenderly";
+import 'hardhat-gas-reporter'
+import 'hardhat-spdx-license-identifier'
+import 'hardhat-watcher'
+import 'solidity-coverage'
+import '@tenderly/hardhat-tenderly'
 
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from 'hardhat/config'
 
-import { removeConsoleLog } from "hardhat-preprocessor";
+import { removeConsoleLog } from 'hardhat-preprocessor'
 
 const accounts = {
-  mnemonic:
-    process.env.MNEMONIC ||
-    "test test test test test test test test test test test junk",
-};
+  mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
+}
 
-import "./tasks";
+import './tasks'
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "hardhat",
+  defaultNetwork: 'hardhat',
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
@@ -40,8 +38,8 @@ const config: HardhatUserConfig = {
   // },
   gasReporter: {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-    currency: "USD",
-    enabled: process.env.REPORT_GAS === "true",
+    currency: 'USD',
+    enabled: process.env.REPORT_GAS === 'true',
   },
   namedAccounts: {
     deployer: {
@@ -63,16 +61,18 @@ const config: HardhatUserConfig = {
     localhost: {
       live: false,
       saveDeployments: true,
-      tags: ["local"],
+      tags: ['local'],
     },
     hardhat: {
       forking: {
-        enabled: process.env.FORKING === "true",
+        enabled: process.env.FORKING === 'true',
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       },
       live: false,
       saveDeployments: true,
-      tags: ["test", "local"],
+      tags: ['test', 'local'],
+      gasPrice: 0,
+      initialBaseFeePerGas: 0,
     },
     ropsten: {
       url: `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -80,7 +80,7 @@ const config: HardhatUserConfig = {
       chainId: 3,
       live: true,
       saveDeployments: true,
-      tags: ["staging"],
+      tags: ['staging'],
       gasMultiplier: 15,
     },
     rinkeby: {
@@ -89,7 +89,7 @@ const config: HardhatUserConfig = {
       chainId: 4,
       live: true,
       saveDeployments: true,
-      tags: ["staging"],
+      tags: ['staging'],
       gasMultiplier: 15,
     },
     goerli: {
@@ -98,7 +98,7 @@ const config: HardhatUserConfig = {
       chainId: 5,
       live: true,
       saveDeployments: true,
-      tags: ["staging"],
+      tags: ['staging'],
       gasMultiplier: 15,
     },
     kovan: {
@@ -107,11 +107,11 @@ const config: HardhatUserConfig = {
       chainId: 42,
       live: true,
       saveDeployments: true,
-      tags: ["staging"],
+      tags: ['staging'],
       gasMultiplier: 10,
     },
     polygon: {
-      url: "https://polygon-rpc.com",
+      url: 'https://polygon-rpc.com',
       accounts,
       chainId: 137,
       live: true,
@@ -119,7 +119,7 @@ const config: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     harmony: {
-      url: "https://api.harmony.one/",
+      url: 'https://api.harmony.one/',
       accounts,
       chainId: 1666600000,
       live: true,
@@ -128,13 +128,10 @@ const config: HardhatUserConfig = {
     },
   },
   preprocess: {
-    eachLine: removeConsoleLog(
-      (bre) =>
-        bre.network.name !== "hardhat" && bre.network.name !== "localhost"
-    ),
+    eachLine: removeConsoleLog((bre) => bre.network.name !== 'hardhat' && bre.network.name !== 'localhost'),
   },
   solidity: {
-    version: "0.6.12",
+    version: '0.6.12',
     settings: {
       optimizer: {
         enabled: true,
@@ -143,22 +140,22 @@ const config: HardhatUserConfig = {
     },
   },
   typechain: {
-    outDir: "typechain",
-    target: "ethers-v5",
+    outDir: 'typechain',
+    target: 'ethers-v5',
   },
   tenderly: {
-    project: process.env.TENDERLY_PROJECT || "",
-    username: process.env.TENDERLY_USERNAME || "",
+    project: process.env.TENDERLY_PROJECT || '',
+    username: process.env.TENDERLY_USERNAME || '',
   },
   watcher: {
     compile: {
-      tasks: ["compile"],
-      files: ["./contracts"],
+      tasks: ['compile'],
+      files: ['./contracts'],
       verbose: true,
     },
   },
-};
+}
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
-export default config;
+export default config
