@@ -8,5 +8,26 @@
   "solidity.packageDefaultDependenciesContractsDirectory": "",
   "solidity.enabledAsYouTypeCompilationErrorCheck": true,
   "solidity.validationDelay": 1500,
-  "solidity.packageDefaultDependenciesDirectory": "node_modules"
+  "solidity.packageDefaultDependenciesDirectory": "node_modules",
+  "eslint.enable": true,
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
 }
