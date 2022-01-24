@@ -9,18 +9,6 @@ contract MISOAdminAccess is AccessControl {
     /// @dev Whether access is initialised.
     bool private initAccess;
 
-    /// @notice Events for adding and removing various roles.
-    event AdminRoleGranted(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
-    event AdminRoleRemoved(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
-
     /// @notice The deployer is automatically given the admin role which will allow them to then grant roles to other addresses.
     constructor() public {
     }
@@ -60,7 +48,6 @@ contract MISOAdminAccess is AccessControl {
      */
     function addAdminRole(address _address) external {
         grantRole(DEFAULT_ADMIN_ROLE, _address);
-        emit AdminRoleGranted(_address, _msgSender());
     }
 
     /**
@@ -70,6 +57,5 @@ contract MISOAdminAccess is AccessControl {
      */
     function removeAdminRole(address _address) external {
         revokeRole(DEFAULT_ADMIN_ROLE, _address);
-        emit AdminRoleRemoved(_address, _msgSender());
     }
 }

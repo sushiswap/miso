@@ -13,38 +13,6 @@ contract MISOAccessControls is MISOAdminAccess {
     bytes32 public constant SMART_CONTRACT_ROLE = keccak256("SMART_CONTRACT_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
-    /// @notice Events for adding and removing various roles
-
-    event MinterRoleGranted(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
-    event MinterRoleRemoved(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
-    event OperatorRoleGranted(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
-    event OperatorRoleRemoved(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
-    event SmartContractRoleGranted(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
-    event SmartContractRoleRemoved(
-        address indexed beneficiary,
-        address indexed caller
-    );
-
     /**
      * @notice The deployer is automatically given the admin role which will allow them to then grant roles to other addresses
      */
@@ -94,7 +62,6 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function addMinterRole(address _address) external {
         grantRole(MINTER_ROLE, _address);
-        emit MinterRoleGranted(_address, _msgSender());
     }
 
     /**
@@ -104,7 +71,6 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function removeMinterRole(address _address) external {
         revokeRole(MINTER_ROLE, _address);
-        emit MinterRoleRemoved(_address, _msgSender());
     }
 
     /**
@@ -114,7 +80,6 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function addSmartContractRole(address _address) external {
         grantRole(SMART_CONTRACT_ROLE, _address);
-        emit SmartContractRoleGranted(_address, _msgSender());
     }
 
     /**
@@ -124,7 +89,6 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function removeSmartContractRole(address _address) external {
         revokeRole(SMART_CONTRACT_ROLE, _address);
-        emit SmartContractRoleRemoved(_address, _msgSender());
     }
 
     /**
@@ -134,7 +98,6 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function addOperatorRole(address _address) external {
         grantRole(OPERATOR_ROLE, _address);
-        emit OperatorRoleGranted(_address, _msgSender());
     }
 
     /**
@@ -144,7 +107,6 @@ contract MISOAccessControls is MISOAdminAccess {
      */
     function removeOperatorRole(address _address) external {
         revokeRole(OPERATOR_ROLE, _address);
-        emit OperatorRoleRemoved(_address, _msgSender());
     }
 
 }
