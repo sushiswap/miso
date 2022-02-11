@@ -12,6 +12,7 @@ import 'hardhat-watcher'
 import 'solidity-coverage'
 import '@tenderly/hardhat-tenderly'
 
+import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { HardhatUserConfig } from 'hardhat/config'
 
 import { removeConsoleLog } from 'hardhat-preprocessor'
@@ -21,6 +22,26 @@ const accounts = {
 }
 
 import './tasks'
+
+const namedAccounts = {
+  owner: {
+    default: 0,
+  },
+  wallet: {
+    default: 1,
+  },
+  beneficiary1: {
+    default: 2,
+  },
+  beneficiary2: {
+    default: 3,
+  },
+  user: {
+    default: 4,
+  },
+}
+
+export type Signers = {[name in keyof typeof namedAccounts]: SignerWithAddress}
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -41,17 +62,7 @@ const config: HardhatUserConfig = {
     currency: 'USD',
     enabled: process.env.REPORT_GAS === 'true',
   },
-  namedAccounts: {
-    deployer: {
-      default: 0,
-    },
-    admin: {
-      default: 1,
-    },
-    dev: {
-      default: 2,
-    },
-  },
+  namedAccounts,
   networks: {
     ethereum: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,

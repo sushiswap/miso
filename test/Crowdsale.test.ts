@@ -1,38 +1,30 @@
-import { solidity } from 'ethereum-waffle'
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
 import hre, { ethers } from 'hardhat'
 import {
+  _1e18,
   AUCTION_TOKENS,
   CROWDSALE_GOAL,
   CROWDSALE_RATE,
-  CROWDSALE_RATE_2,
   CROWDSALE_TIME,
   CROWDSALE_TOKENS,
-  CROWDSALE_TOKENS_2,
   DOCUMENT_DATA,
   DOCUMENT_NAME,
   ETH_ADDRESS,
   ZERO_ADDRESS,
 } from './constants'
 import { FixedToken as IFixedToken, Crowdsale as ICrowdsale } from '../typechain'
-import { setEndTime, setStartTime, deployFixedToken, e10 } from './functions'
+import { setEndTime, setStartTime, deployFixedToken } from './functions'
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { BigNumber, BigNumberish } from 'ethers'
-
-chai.use(solidity)
+import { Signers } from '../hardhat.config'
+import { CrowdsaleERC20, CrowdsaleETH } from './fixtures/Crowdsale'
 
 declare module 'mocha' {
   export interface Context {
     Crowdsale: ICrowdsale
     PaymentToken: IFixedToken
     AuctionToken: IFixedToken
-    signers: {
-      owner: SignerWithAddress
-      wallet: SignerWithAddress
-      beneficiary1: SignerWithAddress
-      beneficiary2: SignerWithAddress
-      user: SignerWithAddress
-    }
+    signers: Signers
   }
 }
 
@@ -40,15 +32,7 @@ describe('Crowdsale', async function () {
   this.slow(1000)
 
   before('', async function () {
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.signers = {} as any
-    ;[
-      this.signers.owner,
-      this.signers.wallet,
-      this.signers.beneficiary1,
-      this.signers.beneficiary2,
-      this.signers.user,
-    ] = await ethers.getSigners()
+    this.signers = (await ethers.getNamedSigners()) as Signers
   })
 
   it('Init emits the correct events', async function () {
@@ -97,24 +81,9 @@ describe('Crowdsale', async function () {
 
   describe('payment currency ETH', async function () {
     beforeEach('', async function () {
-      // StartTime needs to be at least a bit in the future
-      const startTime = BigNumber.from((await hre.ethers.provider.getBlock('latest')).timestamp + 1000)
-      const endTime = startTime.add(CROWDSALE_TIME)
-
-      this.AuctionToken = await deployFixedToken('AuctionToken', 'AT', this.signers.owner.address, CROWDSALE_TOKENS)
-      this.Crowdsale = await deployCrowdsale(
-        this.signers.owner.address,
-        this.AuctionToken,
-        ETH_ADDRESS,
-        CROWDSALE_TOKENS,
-        startTime,
-        endTime,
-        CROWDSALE_RATE,
-        CROWDSALE_GOAL,
-        this.signers.owner.address,
-        ZERO_ADDRESS,
-        this.signers.wallet.address
-      )
+      const { AuctionToken, Crowdsale } = await CrowdsaleETH()
+      this.AuctionToken = AuctionToken
+      this.Crowdsale = Crowdsale
     })
 
     describe('buy tokens', async function () {
@@ -142,7 +111,7 @@ describe('Crowdsale', async function () {
       it('buy token multiple times goal not reached', async function () {
         await setStartTime(this.Crowdsale)
         let totalAmountRaised = BigNumber.from(0)
-        const ethToTransfer = BigNumber.from(2).mul(e10(18))
+        const ethToTransfer = BigNumber.from(2).mul(_1e18)
         await buyTokensEth(this.Crowdsale, this.signers.beneficiary1, ethToTransfer)
         totalAmountRaised = totalAmountRaised.add(ethToTransfer)
         expect((await this.Crowdsale.marketStatus()).commitmentsTotal).to.equal(totalAmountRaised)
@@ -167,7 +136,7 @@ describe('Crowdsale', async function () {
         const balanceBefore = await this.signers.beneficiary1.getBalance()
         const rate = (await this.Crowdsale.marketPrice()).rate
         const totalTokens = (await this.Crowdsale.marketInfo()).totalTokens
-        const maxCommitment = totalTokens.mul(rate).div(e10(18))
+        const maxCommitment = totalTokens.mul(rate).div(_1e18)
         // Buy with twice the max amount
         await buyTokensEth(this.Crowdsale, this.signers.beneficiary1, maxCommitment.mul(2).toBigInt())
         const balanceAfter = await this.signers.beneficiary1.getBalance()
@@ -183,7 +152,7 @@ describe('Crowdsale', async function () {
         await buyTokensEth(this.Crowdsale, this.signers.beneficiary1, commitment.toBigInt())
         await buyTokensEth(this.Crowdsale, this.signers.beneficiary2, commitment.toBigInt())
         await this.Crowdsale.finalize()
-        const expectedTokenAmount = commitment.mul(e10(18)).div((await this.Crowdsale.marketPrice()).rate)
+        const expectedTokenAmount = commitment.mul(_1e18).div((await this.Crowdsale.marketPrice()).rate)
 
         const beneficiary1balanceBefore = await this.AuctionToken.balanceOf(this.signers.beneficiary1.address)
         const beneficiary2balanceBefore = await this.AuctionToken.balanceOf(this.signers.beneficiary2.address)
@@ -243,7 +212,7 @@ describe('Crowdsale', async function () {
 
     it('commitments', async function () {
       await setStartTime(this.Crowdsale)
-      const amount = BigNumber.from(5).mul(e10(18))
+      const amount = BigNumber.from(5).mul(_1e18)
       await buyTokensEth(this.Crowdsale, this.signers.beneficiary1, amount)
       expect(await this.Crowdsale.commitments(this.signers.beneficiary1.address)).to.equal(amount)
     })
@@ -289,25 +258,10 @@ describe('Crowdsale', async function () {
 
   describe('payment token erc20', async function () {
     beforeEach('', async function () {
-      // StartTime needs to be at least a bit in the future
-      const startTime = BigNumber.from((await hre.ethers.provider.getBlock('latest')).timestamp + 1000)
-      const endTime = startTime.add(CROWDSALE_TIME)
-
-      this.AuctionToken = await deployFixedToken('AuctionToken', 'AT', this.signers.owner.address, CROWDSALE_TOKENS_2)
-      this.PaymentToken = await deployFixedToken('PaymentToken', 'PT', this.signers.owner.address, AUCTION_TOKENS)
-      this.Crowdsale = await deployCrowdsale(
-        this.signers.owner.address,
-        this.AuctionToken,
-        this.PaymentToken.address,
-        CROWDSALE_TOKENS_2,
-        startTime,
-        endTime,
-        CROWDSALE_RATE_2,
-        CROWDSALE_GOAL,
-        this.signers.owner.address,
-        ZERO_ADDRESS,
-        this.signers.wallet.address
-      )
+      const { AuctionToken, PaymentToken, Crowdsale } = await CrowdsaleERC20()
+      this.AuctionToken = AuctionToken
+      this.PaymentToken = PaymentToken
+      this.Crowdsale = Crowdsale
     })
 
     describe('buy tokens', async function () {
@@ -321,10 +275,10 @@ describe('Crowdsale', async function () {
 
         const rate = (await this.Crowdsale.marketPrice()).rate
         const totalTokens = (await this.Crowdsale.marketInfo()).totalTokens
-        const maxCommitment = totalTokens.mul(rate).div(e10(18))
+        const maxCommitment = totalTokens.mul(rate).div(_1e18)
 
         let totalAmountRaised = BigNumber.from(0)
-        let tokensToTransfer = BigNumber.from(5).mul(e10(18))
+        let tokensToTransfer = BigNumber.from(5).mul(_1e18)
         // Fund beneficiary 1
         await this.PaymentToken.transfer(this.signers.beneficiary1.address, tokensToTransfer)
         totalAmountRaised = totalAmountRaised.add(tokensToTransfer)
@@ -333,7 +287,7 @@ describe('Crowdsale', async function () {
         balanceAfter = await this.PaymentToken.balanceOf(this.signers.beneficiary1.address)
         expect(balanceBefore.sub(balanceAfter)).to.equal(tokensToTransfer)
 
-        tokensToTransfer = BigNumber.from(2).mul(e10(18))
+        tokensToTransfer = BigNumber.from(2).mul(_1e18)
         await this.PaymentToken.transfer(this.signers.beneficiary2.address, tokensToTransfer)
         totalAmountRaised = totalAmountRaised.add(tokensToTransfer)
         await buyTokensErc20(this.Crowdsale, this.PaymentToken, this.signers.beneficiary2, tokensToTransfer)
@@ -343,7 +297,7 @@ describe('Crowdsale', async function () {
         await expect(this.Crowdsale.finalize()).to.be.revertedWith('Crowdsale: Has not finished yet')
 
         // Max commitment is less than amount we're trying to use now
-        tokensToTransfer = BigNumber.from(5).mul(e10(18))
+        tokensToTransfer = BigNumber.from(5).mul(_1e18)
         balanceBefore = await this.PaymentToken.balanceOf(this.signers.beneficiary2.address)
         await this.PaymentToken.transfer(this.signers.beneficiary2.address, tokensToTransfer)
         totalAmountRaised = totalAmountRaised.add(tokensToTransfer)
@@ -354,11 +308,11 @@ describe('Crowdsale', async function () {
 
         await this.Crowdsale.finalize()
 
-        expectedAmount = (await this.Crowdsale.commitments(this.signers.beneficiary1.address)).mul(rate).div(e10(18))
+        expectedAmount = (await this.Crowdsale.commitments(this.signers.beneficiary1.address)).mul(rate).div(_1e18)
         await expect(this.Crowdsale['withdrawTokens(address)'](this.signers.beneficiary1.address))
           .to.emit(this.Crowdsale, 'TokensWithdrawn')
           .withArgs(this.AuctionToken.address, this.signers.beneficiary1.address, expectedAmount)
-        expectedAmount = (await this.Crowdsale.commitments(this.signers.beneficiary2.address)).mul(rate).div(e10(18))
+        expectedAmount = (await this.Crowdsale.commitments(this.signers.beneficiary2.address)).mul(rate).div(_1e18)
         await expect(this.Crowdsale['withdrawTokens(address)'](this.signers.beneficiary2.address))
           .to.emit(this.Crowdsale, 'TokensWithdrawn')
           .withArgs(this.AuctionToken.address, this.signers.beneficiary2.address, expectedAmount)
@@ -375,28 +329,15 @@ describe('Crowdsale', async function () {
 
   describe('init test', async function () {
     it('init done again', async function () {
+      const { AuctionToken, Crowdsale } = await CrowdsaleETH()
+
       const startTime = BigNumber.from((await hre.ethers.provider.getBlock('latest')).timestamp + 1000)
       const endTime = startTime.add(CROWDSALE_TIME)
 
-      const auctionToken = await deployFixedToken('AuctionToken', 'AT', this.signers.owner.address, CROWDSALE_TOKENS)
-      const crowdsale = await deployCrowdsale(
-        this.signers.owner.address,
-        auctionToken,
-        ETH_ADDRESS,
-        CROWDSALE_TOKENS,
-        startTime,
-        endTime,
-        CROWDSALE_RATE,
-        CROWDSALE_GOAL,
-        this.signers.owner.address,
-        ZERO_ADDRESS,
-        this.signers.wallet.address
-      )
-
       await expect(
-        crowdsale.initCrowdsale(
+        Crowdsale.initCrowdsale(
           this.signers.owner.address,
-          auctionToken.address,
+          AuctionToken.address,
           ETH_ADDRESS,
           CROWDSALE_TOKENS,
           startTime,
@@ -411,8 +352,8 @@ describe('Crowdsale', async function () {
     })
 
     it('init goal greater than total tokens', async function () {
-      const goal = BigNumber.from(10).mul(e10(18))
-      const totalTokens = e10(18)
+      const goal = BigNumber.from(10).mul(_1e18)
+      const totalTokens = _1e18
       const startTime = BigNumber.from((await hre.ethers.provider.getBlock('latest')).timestamp + 1000)
       const endTime = startTime.add(CROWDSALE_TIME)
 
@@ -559,24 +500,9 @@ describe('Crowdsale', async function () {
 
   describe('documentation test', async function () {
     beforeEach('', async function () {
-      // StartTime needs to be at least a bit in the future
-      const startTime = BigNumber.from((await hre.ethers.provider.getBlock('latest')).timestamp + 1000)
-      const endTime = startTime.add(CROWDSALE_TIME)
-
-      this.AuctionToken = await deployFixedToken('AuctionToken', 'AT', this.signers.owner.address, CROWDSALE_TOKENS)
-      this.Crowdsale = await deployCrowdsale(
-        this.signers.owner.address,
-        this.AuctionToken,
-        ETH_ADDRESS,
-        CROWDSALE_TOKENS,
-        startTime,
-        endTime,
-        CROWDSALE_RATE,
-        CROWDSALE_GOAL,
-        this.signers.owner.address,
-        ZERO_ADDRESS,
-        this.signers.wallet.address
-      )
+      const { AuctionToken, Crowdsale } = await CrowdsaleETH()
+      this.AuctionToken = AuctionToken
+      this.Crowdsale = Crowdsale
     })
 
     it('set document zero value', async function () {
@@ -596,7 +522,7 @@ describe('Crowdsale', async function () {
 })
 
 // Helper functions
-async function deployCrowdsale(
+export async function deployCrowdsale(
   funder: string,
   auctionToken: IFixedToken,
   paymentToken: string, // can be ETH
@@ -637,7 +563,7 @@ async function buyTokensErc20(
   const commitmentsTotalBefore = (await crowdsale.marketStatus()).commitmentsTotal
   const rate = (await crowdsale.marketPrice()).rate
   const totalTokens = (await crowdsale.marketInfo()).totalTokens
-  const maxCommitment = totalTokens.mul(rate).div(e10(18)).sub(commitmentsTotalBefore)
+  const maxCommitment = totalTokens.mul(rate).div(_1e18).sub(commitmentsTotalBefore)
   await paymentToken.connect(signer).approve(crowdsale.address, amount)
   await expect(crowdsale.connect(signer).commitTokens(amount, true)).to.emit(crowdsale, 'AddedCommitment')
   expect((await crowdsale.marketStatus()).commitmentsTotal).to.equal(
@@ -649,7 +575,7 @@ async function buyTokensEth(crowdsale: ICrowdsale, signer: SignerWithAddress, am
   const commitmentsTotalBefore = (await crowdsale.marketStatus()).commitmentsTotal
   const rate = (await crowdsale.marketPrice()).rate
   const totalTokens = (await crowdsale.marketInfo()).totalTokens
-  const maxCommitment = totalTokens.mul(rate).div(e10(18)).sub(commitmentsTotalBefore)
+  const maxCommitment = totalTokens.mul(rate).div(_1e18).sub(commitmentsTotalBefore)
   await expect(crowdsale.connect(signer).commitEth(signer.address, true, { value: amount })).to.emit(
     crowdsale,
     'AddedCommitment'
