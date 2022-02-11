@@ -129,8 +129,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
     /// @notice Event for adding a commitment.
     event AddedCommitment(address addr, uint256 commitment);
-    /// @notice Event for token withdrawals.
-    event TokensWithdrawn(address token, address to, uint256 amount);
 
     /// @notice Event for finalization of the crowdsale
     event AuctionFinalized();
@@ -348,9 +346,7 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             uint256 tokensToClaim = tokensClaimable(beneficiary);
             require(tokensToClaim > 0, "Crowdsale: no tokens to claim"); 
             claimed[beneficiary] = claimed[beneficiary].add(tokensToClaim);
-            _safeTokenPayment(auctionToken, beneficiary, tokensToClaim);
-
-            emit TokensWithdrawn(auctionToken, beneficiary, tokensToClaim);
+            _safeTokenPayment(auctionToken, beneficiary, tokensToClaim);            
         } else {
             /// @dev Auction did not meet reserve price.
             /// @dev Return committed funds back to user.
@@ -358,8 +354,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             uint256 accountBalance = commitments[beneficiary];
             commitments[beneficiary] = 0; // Stop multiple withdrawals and free some gas
             _safeTokenPayment(paymentCurrency, beneficiary, accountBalance);
-
-            emit TokensWithdrawn(paymentCurrency, beneficiary, accountBalance);
         }
     }
 
@@ -409,17 +403,11 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
             uint256 unsoldTokens = uint256(info.totalTokens).sub(soldTokens);
             if(unsoldTokens > 0) {
                 _safeTokenPayment(auctionToken, wallet, unsoldTokens);
-
-                emit TokensWithdrawn(auctionToken, wallet, unsoldTokens);
             }
-
-            emit TokensWithdrawn(paymentCurrency, wallet, uint256(status.commitmentsTotal));
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
             _safeTokenPayment(auctionToken, wallet, uint256(info.totalTokens));
-
-            emit TokensWithdrawn(auctionToken, wallet, uint256(info.totalTokens));
         }
 
         status.finalized = true;
@@ -442,7 +430,6 @@ contract Crowdsale is IMisoMarket, MISOAccessControls, BoringBatchable, SafeTran
 
         status.finalized = true;
         emit AuctionCancelled();
-        emit TokensWithdrawn(auctionToken, wallet, uint256(marketInfo.totalTokens));
     }
 
     function tokenPrice() public view returns (uint256) {

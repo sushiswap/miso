@@ -294,14 +294,10 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
             /// @dev Successful auction
             /// @dev Transfer contributed tokens to wallet.
             _safeTokenPayment(paymentCurrency, wallet, uint256(marketStatus.commitmentsTotal));
-            
-            emit TokensWithdrawn(paymentCurrency, wallet, uint256(marketStatus.commitmentsTotal));
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
             _safeTokenPayment(auctionToken, wallet, marketInfo.totalTokens);
-            
-            emit TokensWithdrawn(auctionToken, wallet, marketInfo.totalTokens);
         }
         marketStatus.finalized = true;
         emit AuctionFinalized();
@@ -322,7 +318,6 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
 
         status.finalized = true;
         emit AuctionCancelled();
-        emit TokensWithdrawn(auctionToken, wallet, uint256(marketInfo.totalTokens));
     }
 
     /// @notice Withdraws bought tokens, or returns commitment if the sale is unsuccessful.
@@ -340,8 +335,6 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
             claimed[beneficiary] = claimed[beneficiary].add(tokensToClaim);
 
             _safeTokenPayment(auctionToken, beneficiary, tokensToClaim);
-
-            emit TokensWithdrawn(auctionToken, beneficiary, tokensToClaim);
         } else {
             /// @dev Auction did not meet reserve price.
             /// @dev Return committed funds back to user.
@@ -350,8 +343,6 @@ contract BatchAuction is  IMisoMarket, MISOAccessControls, BoringBatchable, Safe
             require(fundsCommitted > 0, "BatchAuction: No funds committed");
             commitments[beneficiary] = 0; // Stop multiple withdrawals and free some gas
             _safeTokenPayment(paymentCurrency, beneficiary, fundsCommitted);
-
-            emit TokensWithdrawn(paymentCurrency, beneficiary, fundsCommitted);
         }
     }
 
