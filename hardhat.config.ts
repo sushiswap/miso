@@ -24,24 +24,33 @@ const accounts = {
 import './tasks'
 
 const namedAccounts = {
-  owner: {
+  deployer: {
     default: 0,
   },
-  wallet: {
+  admin: {
     default: 1,
   },
-  beneficiary1: {
+  dev: {
     default: 2,
   },
-  beneficiary2: {
+  owner: {
     default: 3,
   },
-  user: {
+  wallet: {
     default: 4,
+  },
+  beneficiary1: {
+    default: 5,
+  },
+  beneficiary2: {
+    default: 6,
+  },
+  user: {
+    default: 7,
   },
 }
 
-export type Signers = {[name in keyof typeof namedAccounts]: SignerWithAddress}
+export type Signers = { [name in keyof typeof namedAccounts]: SignerWithAddress }
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -62,7 +71,17 @@ const config: HardhatUserConfig = {
     currency: 'USD',
     enabled: process.env.REPORT_GAS === 'true',
   },
-  namedAccounts,
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    admin: {
+      default: 1,
+    },
+    dev: {
+      default: 2,
+    },
+  },
   networks: {
     ethereum: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
@@ -130,12 +149,12 @@ const config: HardhatUserConfig = {
       gasMultiplier: 2,
     },
     harmony: {
-      url: 'https://api.harmony.one/',
+      url: 'https://api.harmony.one',
       accounts,
       chainId: 1666600000,
       live: true,
       saveDeployments: true,
-      gasMultiplier: 2,
+      gasMultiplier: 4,
     },
   },
   preprocess: {
