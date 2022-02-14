@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-task("add:admin", "Adds admin")
+task("add-admin", "Adds admin")
   .addParam("address", "New Admin")
   .setAction(async function (
     { address },
@@ -8,7 +8,9 @@ task("add:admin", "Adds admin")
   ) {
     const admin = await getNamedSigner("admin");
 
-    const accessControl = await getContract("MISOAccessControl", admin);
+    console.log(`Admin is ${admin.address}`);
+
+    const accessControl = await getContract("MISOAccessControls", admin);
 
     console.log("Adding admin...");
 

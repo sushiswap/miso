@@ -62,8 +62,7 @@ deployFunction.dependencies = [
   "MISOAccessControls",
   "FixedToken",
   "MintableToken",
-  "SushiToken",
-  "GovToken",
+  "SushiToken"
 ];
 
 deployFunction.tags = ["MISOTokenFactory"];
