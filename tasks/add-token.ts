@@ -1,18 +1,15 @@
-import { task } from "hardhat/config";
+import { task } from 'hardhat/config'
 
-task("add-token", "Adds token")
-  .addParam("address", "New token")
-  .setAction(async function (
-    { address },
-    { ethers: { getNamedSigner, getContract } }
-  ) {
-    const admin = await getNamedSigner("admin");
+task('add-token', 'Adds token')
+  .addParam('address', 'New token')
+  .setAction(async function ({ address }, { ethers: { getNamedSigner, getContract } }) {
+    const admin = await getNamedSigner('admin')
 
-    const misoTokenFactory = await getContract("MISOTokenFactory", admin);
+    const misoTokenFactory = await getContract('MISOTokenFactory', admin)
 
-    console.log("Adding token...");
+    console.log('Adding token...')
 
-    await (await misoTokenFactory.addTokenTemplate(address)).wait();
+    await (await misoTokenFactory.addTokenTemplate(address)).wait()
 
-    console.log("Token added!");
-  });
+    console.log('Token added!')
+  })
