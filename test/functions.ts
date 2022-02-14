@@ -30,7 +30,3 @@ export async function deployFixedToken(name: string, symbol: string, owner: stri
 
   return token
 }
-
-export function e10(e: BigNumberish) {
-  return BigNumber.from(10).pow(e)
-}

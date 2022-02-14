@@ -425,15 +425,11 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
             /// @dev Successful auction
             /// @dev Transfer contributed tokens to wallet.
             _safeTokenPayment(paymentCurrency, wallet, uint256(status.commitmentsTotal));
-
-            emit TokensWithdrawn(paymentCurrency, wallet, uint256(status.commitmentsTotal));
         } else {
             /// @dev Failed auction
             /// @dev Return auction tokens back to wallet.
             require(block.timestamp > uint256(info.endTime), "HyperbolicAuction: auction has not finished yet"); 
             _safeTokenPayment(auctionToken, wallet, uint256(info.totalTokens));
-
-            emit TokensWithdrawn(auctionToken, wallet, uint256(info.totalTokens));
         }
         status.finalized = true;
         emit AuctionFinalized();
@@ -454,7 +450,6 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
 
         status.finalized = true;
         emit AuctionCancelled();
-        emit TokensWithdrawn(auctionToken, wallet, uint256(marketInfo.totalTokens));
     }
 
     /** 
@@ -491,8 +486,6 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
             claimed[beneficiary] = claimed[beneficiary].add(tokensToClaim);
 
             _safeTokenPayment(auctionToken, beneficiary, tokensToClaim);
-
-            emit TokensWithdrawn(auctionToken, beneficiary, tokensToClaim);
         } else {
             /// @dev Auction did not meet reserve price.
             /// @dev Return committed funds back to user.
@@ -500,8 +493,6 @@ contract HyperbolicAuction is IMisoMarket, MISOAccessControls, BoringBatchable, 
             uint256 fundsCommitted = commitments[beneficiary];
             commitments[beneficiary] = 0; // Stop multiple withdrawals and free some gas
             _safeTokenPayment(paymentCurrency, beneficiary, fundsCommitted);
-
-            emit TokensWithdrawn(paymentCurrency, beneficiary, fundsCommitted);
         }
     }
 

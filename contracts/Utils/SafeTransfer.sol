@@ -4,6 +4,9 @@ contract SafeTransfer {
 
     address private constant ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
+    /// @notice Event for token withdrawals.
+    event TokensWithdrawn(address token, address to, uint256 amount);
+
     /// @dev Helper function to handle both ETH and ERC20 payments
     function _safeTokenPayment(
         address _token,
@@ -15,6 +18,8 @@ contract SafeTransfer {
         } else {
             _safeTransfer(_token, _to, _amount);
         }
+
+        emit TokensWithdrawn(_token, _to, _amount);
     }
 
 
@@ -29,6 +34,8 @@ contract SafeTransfer {
         } else {
             _safeTransfer(_token, _to, _amount);
         }
+
+        emit TokensWithdrawn(_token, _to, _amount);
     }
 
 
