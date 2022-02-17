@@ -71,17 +71,7 @@ const config: HardhatUserConfig = {
     currency: 'USD',
     enabled: process.env.REPORT_GAS === 'true',
   },
-  namedAccounts: {
-    deployer: {
-      default: 0,
-    },
-    admin: {
-      default: 1,
-    },
-    dev: {
-      default: 2,
-    },
-  },
+  namedAccounts,
   networks: {
     ethereum: {
       url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,

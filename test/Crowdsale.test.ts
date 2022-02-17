@@ -535,7 +535,9 @@ export async function deployCrowdsale(
   pointList: string,
   wallet: string
 ) {
-  const crowdsale = (await (await ethers.getContractFactory('Crowdsale')).deploy()) as ICrowdsale
+  const crowdsale = (await (await ethers.getContractFactory('Crowdsale'))
+    .connect(await ethers.getSigner(funder))
+    .deploy()) as ICrowdsale
   await auctionToken.approve(crowdsale.address, totalTokens)
   await crowdsale.functions.initCrowdsale(
     funder,
