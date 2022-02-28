@@ -25,7 +25,9 @@ export async function setEndTime(auction: Contract) {
 }
 
 export async function deployFixedToken(name: string, symbol: string, owner: string, amount: BigNumberish) {
-  const token = (await (await ethers.getContractFactory('FixedToken')).deploy()) as IFixedToken
+  const token = (await (await ethers.getContractFactory('FixedToken'))
+    .connect(await ethers.getSigner(owner))
+    .deploy()) as IFixedToken
   await token.functions['initToken(string,string,address,uint256)'](name, symbol, owner, amount)
 
   return token
