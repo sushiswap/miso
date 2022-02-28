@@ -749,6 +749,7 @@
     fastq "^1.6.0"
 
 "@nomiclabs/hardhat-ethers@yarn:hardhat-deploy-ethers", hardhat-deploy-ethers@^0.3.0-beta.13:
+  name "@nomiclabs/hardhat-ethers"
   version "0.3.0-beta.13"
   resolved "https://registry.yarnpkg.com/hardhat-deploy-ethers/-/hardhat-deploy-ethers-0.3.0-beta.13.tgz#b96086ff768ddf69928984d5eb0a8d78cfca9366"
   integrity sha512-PdWVcKB9coqWV1L7JTpfXRCI91Cgwsm7KLmBcwZ8f0COSm1xtABHZTyz3fvF6p42cTnz1VM0QnfDvMFlIRkSNw==
@@ -936,10 +937,10 @@
   resolved "https://registry.yarnpkg.com/@sushiswap/contracts/-/contracts-1.0.0-canary.0.tgz#669490bb508fcccbb63608109a63d6e53c66e985"
   integrity sha512-Ju5B8TcUx/9bgApj2b8vDgTlCog+LuVXhNjk+qdkwQD1aPgjc/Y5GpLDiehzWwOc3tiawvDJd0XEZwzQRDnDgg==
 
-"@sushiswap/core-sdk@1.0.0-canary.34":
-  version "1.0.0-canary.34"
-  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.34.tgz#492dd13861c33c9ce1d076e9c6c5d24047474522"
-  integrity sha512-fQ8eGWVE0eT393mh4k/t95HDopMdJhmDXU2dOvo/3zZ7+R6qBOKVaw4e2CgtO3ZICN1B3KirzfrXBGK2JkquMw==
+"@sushiswap/core-sdk@1.0.0-canary.75":
+  version "1.0.0-canary.75"
+  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.75.tgz#75d852504ddee2499035a71f27931c7a9896ced0"
+  integrity sha512-IRueQoOaxX9wB1c5jgE/ueh66/VS/v8MSjnJINtC+7hJ0YfTe8TKa1J11Y1qYczjulJ3/P0GOkTG2XzttR3SHw==
   dependencies:
     "@ethersproject/address" "^5.4.0"
     "@ethersproject/bignumber" "^5.4.0"

@@ -11,17 +11,15 @@ import 'hardhat-spdx-license-identifier'
 import 'hardhat-watcher'
 import 'solidity-coverage'
 import '@tenderly/hardhat-tenderly'
+import './tasks'
 
-import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { HardhatUserConfig } from 'hardhat/config'
-
+import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { removeConsoleLog } from 'hardhat-preprocessor'
 
 const accounts = {
   mnemonic: process.env.MNEMONIC || 'test test test test test test test test test test test junk',
 }
-
-import './tasks'
 
 const namedAccounts = {
   deployer: {
@@ -155,6 +153,13 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       gasMultiplier: 4,
+    },
+    moonbeam: {
+      url: 'https://rpc.api.moonbeam.network',
+      accounts,
+      chainId: 1284,
+      live: true,
+      saveDeployments: true,
     },
   },
   preprocess: {
