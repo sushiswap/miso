@@ -3,8 +3,8 @@ import { FACTORY_ADDRESS, WNATIVE_ADDRESS } from '@sushiswap/core-sdk'
 import { NomicLabsHardhatPluginError } from 'hardhat/plugins'
 import { task } from 'hardhat/config'
 
-task('verify:all', 'Verify all contracts', async (_, { ethers, tenderly, run, getChainId }) => {
-  const chainId = parseInt(await getChainId())
+task('verify-all', 'Verify all contracts', async (_, { ethers, tenderly, run, getChainId }) => {
+  const chainId = Number(await getChainId())
 
   const batchAuction = await ethers.getContract('BatchAuction')
   const crowdsale = await ethers.getContract('Crowdsale')
@@ -117,17 +117,17 @@ task('verify:all', 'Verify all contracts', async (_, { ethers, tenderly, run, ge
       ],
     },
   ]
-  // for (const { address, constructorArguments } of contracts) {
-  //   try {
-  //     await run("verify:verify", {
-  //       address,
-  //       constructorArguments,
-  //     });
-  //   } catch (error) {
-  //     if (error instanceof NomicLabsHardhatPluginError) {
-  //       console.debug(error.message);
-  //     }
-  //   }
-  // }
-  // await tenderly.verify(contracts);
+  for (const { address, constructorArguments } of contracts) {
+    try {
+      await run('verify:verify', {
+        address,
+        constructorArguments,
+      })
+    } catch (error) {
+      if (error instanceof NomicLabsHardhatPluginError) {
+        console.debug(error.message)
+      }
+    }
+  }
+  await tenderly.verify(contracts)
 })
