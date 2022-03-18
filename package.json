@@ -29,7 +29,7 @@
     "url": "https://github.com/sushiswap/miso.git"
   },
   "scripts": {
-    "build": "hardhat compile",
+    "build": "cross-env TS_NODE_TRANSPILE_ONLY=1 hardhat compile",
     "console": "hardhat console",
     "mainnet:deploy": "hardhat --network mainnet deploy",
     "mainnet:verify": "hardhat --network mainnet etherscan-verify --license GPL-3.0 --force-license",
