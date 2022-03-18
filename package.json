@@ -78,7 +78,7 @@
     "@sushiswap/bentobox": "^0.4.0",
     "@sushiswap/contracts": "^1.0.0-canary.0",
     "@sushiswap/core": "^2.0.0-canary.1",
-    "@sushiswap/core-sdk": "1.0.0-canary.75",
+    "@sushiswap/core-sdk": "1.0.0-canary.89",
     "@tenderly/hardhat-tenderly": "^1.0.13",
     "@typechain/ethers-v5": "^7.2.0",
     "@typechain/hardhat": "^3.1.0",

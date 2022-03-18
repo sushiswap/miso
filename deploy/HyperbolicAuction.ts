@@ -1,26 +1,23 @@
-import { DeployFunction } from "hardhat-deploy/types";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction } from 'hardhat-deploy/types'
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-const deployFunction: DeployFunction = async function ({
-  deployments,
-  getNamedAccounts,
-}: HardhatRuntimeEnvironment) {
-  console.log("Running HyperbolicAuction deploy script");
-  const { deploy } = deployments;
+const deployFunction: DeployFunction = async function ({ deployments, getNamedAccounts }: HardhatRuntimeEnvironment) {
+  console.log('Running HyperbolicAuction deploy script')
+  const { deploy } = deployments
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts()
 
-  const { address } = await deploy("HyperbolicAuction", {
+  const { address } = await deploy('HyperbolicAuction', {
     from: deployer,
     log: true,
     deterministicDeployment: false,
-  });
+  })
 
-  console.log("HyperbolicAuction deployed at ", address);
-};
+  console.log('HyperbolicAuction deployed at ', address)
+}
 
-export default deployFunction;
+export default deployFunction
 
-deployFunction.dependencies = [];
+deployFunction.dependencies = []
 
-deployFunction.tags = ["HyperbolicAuction"];
+deployFunction.tags = ['HyperbolicAuction']

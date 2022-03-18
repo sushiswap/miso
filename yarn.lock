@@ -937,10 +937,10 @@
   resolved "https://registry.yarnpkg.com/@sushiswap/contracts/-/contracts-1.0.0-canary.0.tgz#669490bb508fcccbb63608109a63d6e53c66e985"
   integrity sha512-Ju5B8TcUx/9bgApj2b8vDgTlCog+LuVXhNjk+qdkwQD1aPgjc/Y5GpLDiehzWwOc3tiawvDJd0XEZwzQRDnDgg==
 
-"@sushiswap/core-sdk@1.0.0-canary.75":
-  version "1.0.0-canary.75"
-  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.75.tgz#75d852504ddee2499035a71f27931c7a9896ced0"
-  integrity sha512-IRueQoOaxX9wB1c5jgE/ueh66/VS/v8MSjnJINtC+7hJ0YfTe8TKa1J11Y1qYczjulJ3/P0GOkTG2XzttR3SHw==
+"@sushiswap/core-sdk@1.0.0-canary.89":
+  version "1.0.0-canary.89"
+  resolved "https://registry.yarnpkg.com/@sushiswap/core-sdk/-/core-sdk-1.0.0-canary.89.tgz#a608c4154547c6916ad23b0b2bf197e107ee8746"
+  integrity sha512-kqr9xCyyL/aSBtraB2YnHx2VFPwzXDDgHjgongTUJV8g0lER79szWhI1G39CIYQMm2XhAvEyH7WkEf4hDlltsw==
   dependencies:
     "@ethersproject/address" "^5.4.0"
     "@ethersproject/bignumber" "^5.4.0"
