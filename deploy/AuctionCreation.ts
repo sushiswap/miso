@@ -1,43 +1,44 @@
-import { DeployFunction } from "hardhat-deploy/types";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { FACTORY_ADDRESS } from "@sushiswap/core-sdk";
+import { DeployFunction } from 'hardhat-deploy/types'
+import { FACTORY_ADDRESS } from '@sushiswap/core-sdk'
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 const deployFunction: DeployFunction = async function ({
   deployments,
   getNamedAccounts,
   getChainId,
+  ethers,
 }: HardhatRuntimeEnvironment) {
-  console.log("Running MISOReceipe deploy script");
+  console.log('Running MISOReceipe deploy script')
 
-  const chainId = parseInt(await getChainId());
+  const chainId = parseInt(await getChainId())
 
-  const { deploy } = deployments;
+  const { deploy } = deployments
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts()
 
-  const { address } = await deploy("AuctionCreation", {
+  const misoTokenFactory = await ethers.getContract('MISOTokenFactory')
+  const listFactory = await ethers.getContract('ListFactory')
+  const misoLauncher = await ethers.getContract('MISOLauncher')
+  const misoMarket = await ethers.getContract('MISOMarket')
+
+  const { address } = await deploy('AuctionCreation', {
     from: deployer,
     log: true,
     args: [
-      (await deployments.get("MISOTokenFactory")).address,
-      (await deployments.get("ListFactory")).address,
-      (await deployments.get("MISOLauncher")).address,
-      (await deployments.get("MISOMarket")).address,
+      misoTokenFactory.address,
+      listFactory.address,
+      misoLauncher.address,
+      misoMarket.address,
       FACTORY_ADDRESS[chainId],
     ],
     deterministicDeployment: false,
-  });
+  })
 
-  console.log("MISOReceipe deployed at ", address);
-};
+  console.log('MISOReceipe deployed at ', address)
+}
 
-export default deployFunction;
+export default deployFunction
 
-deployFunction.dependencies = [
-  "MISOTokenFactory",
-  "ListFactory",
-  "MISOLauncher",
-  "MISOMarket",
-];
+deployFunction.dependencies = ['MISOTokenFactory', 'ListFactory', 'MISOLauncher', 'MISOMarket']
 
-deployFunction.tags = ["AuctionCreation"];
+deployFunction.tags = ['AuctionCreation']
