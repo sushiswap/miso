@@ -93,15 +93,11 @@ contract AuctionCreation is SafeTransfer {
 
     (address newMarket, uint256 tokenForSale) = createMarket(marketData, token, pointList);
 
-    address newLauncher = createLauncher(launcherData, token, tokenForSale, newMarket);
-
     // Miso market has to give admin role to the user, since it's set to this contract initially
     // to allow the auction wallet to be set to launcher once it's been deployed
     IMisoMarket(newMarket).addAdminRole(msg.sender);
 
-    // Have to set auction wallet to the new launcher address AFTER the market is created
-    // new launcher address is casted to payable to satisfy interface.
-    IMisoMarket(newMarket).setAuctionWallet(payable(newLauncher));
+    createLauncher(launcherData, token, tokenForSale, newMarket);
 
     uint256 tokenBalanceRemaining = IERC20(token).balanceOf(address(this));
     if (tokenBalanceRemaining > 0) {
@@ -168,13 +164,19 @@ contract AuctionCreation is SafeTransfer {
       (uint256, uint256, uint256)
     );
 
-    newLauncher = misoLauncher.createLauncher(
-      _launcherTemplateId,
-      token,
-      (tokenForSale * _liquidityPercent) / 10000,
-      address(0),
-      abi.encode(newMarket, factory, msg.sender, msg.sender, _liquidityPercent, _locktime)
-    );
+    if(_liquidityPercent > 0) {
+      newLauncher = misoLauncher.createLauncher(
+        _launcherTemplateId,
+        token,
+        (tokenForSale * _liquidityPercent) / 10000,
+        address(0),
+        abi.encode(newMarket, factory, msg.sender, msg.sender, _liquidityPercent, _locktime)
+      );
+
+      // Have to set auction wallet to the new launcher address AFTER the market is created
+      // new launcher address is casted to payable to satisfy interface.
+      IMisoMarket(newMarket).setAuctionWallet(payable(newLauncher));
+    }
   }
 
   function getTokenForSale(uint256 marketTemplateId, bytes memory mData) internal view returns (uint256 tokenForSale) {
