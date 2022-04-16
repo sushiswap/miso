@@ -21,8 +21,6 @@ const deployFunction: DeployFunction = async function ({
 
   const accessControls = await ethers.getContract('MISOAccessControls')
 
-  console.log('DEPLOYER HAS ADMIN?', await accessControls.hasAdminRole(deployer))
-
   if (!(await accessControls.hasAdminRole(deployer))) {
     console.log('MISOAccessControls initilising')
     try {

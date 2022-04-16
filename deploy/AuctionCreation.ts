@@ -7,6 +7,7 @@ const deployFunction: DeployFunction = async function ({
   getNamedAccounts,
   getChainId,
   ethers,
+  run,
 }: HardhatRuntimeEnvironment) {
   console.log('Running MISOReceipe deploy script')
 
@@ -35,6 +36,10 @@ const deployFunction: DeployFunction = async function ({
   })
 
   console.log('MISOReceipe deployed at ', address)
+
+  console.log('Adding minter ', address)
+  await run('add-minter', { address })
+  console.log('Minter added ', address)
 }
 
 export default deployFunction

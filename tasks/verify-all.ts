@@ -117,17 +117,17 @@ task('verify-all', 'Verify all contracts', async (_, { ethers, tenderly, run, ge
       ],
     },
   ]
-  for (const { address, constructorArguments } of contracts) {
-    try {
-      await run('verify:verify', {
-        address,
-        constructorArguments,
-      })
-    } catch (error) {
-      if (error instanceof NomicLabsHardhatPluginError) {
-        console.debug(error.message)
-      }
-    }
-  }
+  // for (const { address, constructorArguments } of contracts) {
+  //   try {
+  //     await run('verify:verify', {
+  //       address,
+  //       constructorArguments,
+  //     })
+  //   } catch (error) {
+  //     if (error instanceof NomicLabsHardhatPluginError) {
+  //       console.debug(error.message)
+  //     }
+  //   }
+  // }
   await tenderly.verify(contracts)
 })

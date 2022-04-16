@@ -128,6 +128,13 @@ const config: HardhatUserConfig = {
       tags: ['staging'],
       gasMultiplier: 10,
     },
+    avalanche: {
+      url: 'https://api.avax.network/ext/bc/C/rpc',
+      accounts,
+      chainId: 43114,
+      live: true,
+      saveDeployments: true,
+    },
     polygon: {
       url: 'https://polygon-rpc.com',
       accounts,
@@ -135,6 +142,13 @@ const config: HardhatUserConfig = {
       live: true,
       saveDeployments: true,
       gasMultiplier: 2,
+    },
+    fantom: {
+      url: 'https://rpcapi.fantom.network',
+      accounts,
+      chainId: 250,
+      live: true,
+      saveDeployments: true,
     },
     harmony: {
       url: 'https://api.harmony.one',
@@ -162,6 +176,13 @@ const config: HardhatUserConfig = {
       url: 'https://bsc-dataseed.binance.org',
       accounts,
       chainId: 56,
+      live: true,
+      saveDeployments: true,
+    },
+    arbitrum: {
+      url: 'https://arb1.arbitrum.io/rpc',
+      accounts,
+      chainId: 42161,
       live: true,
       saveDeployments: true,
     },
